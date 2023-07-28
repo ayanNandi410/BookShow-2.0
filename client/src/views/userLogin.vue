@@ -1,10 +1,19 @@
 <script> 
+import ToastMsg from '../components/toastMsg.vue'
+import { fetch_auth_token } from '../api';
+
 export default {
   name: "UserLogin",
   data() {
     return {
+      auth_token: "",
       email: "",
       password: "",
+      header: "",
+      head_end: "",
+      message: "",
+      type: "",
+      toastShow: false,
     };
   },
   methods: {
@@ -12,26 +21,68 @@ export default {
       return /^[^@]+@\w+(\.\w+)+\w$/.test(this.email);
     },
 
-    submitForm() {
+    closeToast(){
+      this.toastShow = false;
+    },
 
+    submitForm() {
+      this.type = "error";
+      this.toastShow = true;
       if(!this.isValidEmail()){
           console.log("Invalid email");
+          this.message = "Invalid email";
+          this.header = "Form Error";
       }
+      else if(this.password.length < 8){
+        console.log("Password Length too short");
+        this.message = "Password Length too short";
+        this.header = "Form Error";
+      }
+      else{
+        //this.$store.dispatch('load_auth_token', { email: this.email, password: this.password })
+        fetch_auth_token({ email: this.email, password: this.password })
+        .then(async res =>  {
+              const data = await res.json()
 
-      this.$store.dispatch('load_auth_token', { email: this.email, password: this.password })
-      this.$store.dispatch('toggle_current_user')
-      this.$router.push('/user/home')
+            if(!res.ok){
+              this.message = data.response.errors[0];
+              this.header = "Validation Error";
+            }
+            else{
+                //context.commit('set_auth_token', { auth_token: data['response']['user']['authentication_token']})
+                this.auth_token = data['response']['user']['authentication_token'];
+                localStorage.auth_token = this.auth_token;
+
+                this.$store.commit('toggle_user')
+                this.$router.push('/user/home')
+                this.toastShow = false;
+                this.$store.commit('empty_error_message')
+            }
+            
+        })
+        .catch(e => {
+            this.message = e.message;
+            this.header = "Fetch Error"
+            }
+        );   
+        
+      }
     },
   },
-  computed: {
-
-  },
-  components: {},
+  components: { ToastMsg },
 };
 </script>
 
 <template>
   <div class="body">
+    <ToastMsg 
+    v-bind:header="header" 
+    v-bind:head_end="head_end" 
+    v-bind:message="message" 
+    v-bind:type="type" 
+    v-if="toastShow"
+    @close-toast="closeToast" />
+
     <div class="container-fluid">
       <div class="row d-flex justify-content-center">
         <div class="col-md-9 col-lg-6 col-xl-5">
@@ -39,7 +90,7 @@ export default {
             <img
               src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp"
               class="card-img-top"
-              alt="Sample image"
+              alt="Login Image"
             />
             <div class="card-body">
               <h5 class="card-title">Sign In</h5>

@@ -15,25 +15,32 @@ const actions = {
   // asynchronous operations
     async load_auth_token(context, user_details){
         console.log("In load_auth_token")
-        return fetch_auth_token(user_details)
+        fetch_auth_token(user_details)
         .then(async res =>  {
-            const data = await res.json()
-            console.log(data)
             
+              const data = await res.json()
+
+
             if(!res.ok){
-                // Error handling
                 context.commit('set_error_message', { error_message: data.response.errors[0]});
+                return false;
             }
             else{
                 context.commit('set_auth_token', { auth_token: data['response']['user']['authentication_token']})
+                return true;
             }
             
         })
         .catch(e => {
             context.commit('set_error_message', { error_message: e});
             console.log("Fetch Error: "+e)
+            return false;
             }
         );   
+    },
+
+    async error_message_clear(context){
+      context.commit('empty_error_message');
     },
 
     toggle_current_user(context){
@@ -52,6 +59,11 @@ const mutations = {
   set_error_message(state, payload){
     state.error_message = payload.error_message;
     console.log("New Error Message: "+state.error_message)
+  },
+
+  empty_error_message(state){
+    state.error_message = "";
+    console.log("Error Message Cleared")
   },
 
   toggle_user(state){

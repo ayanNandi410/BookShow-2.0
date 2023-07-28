@@ -1,10 +1,12 @@
 <script>
+import { onMounted } from 'vue';
 import { fetchCities } from '../api'
 
 export default {
   name: "userHome",
   data() {
     return {
+      auth_token: "",
       cities: [],
       error_code: "",
       error_message: "",
@@ -40,6 +42,12 @@ export default {
 
   beforeMount() {
     this.load_all_cities();
+  },
+
+  onMounted(){
+    if(localStorage.auth_token){
+      this.auth_token = localStorage.auth_token;
+    }
   }
 
 };
