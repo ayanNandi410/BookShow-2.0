@@ -1,5 +1,6 @@
 <script>
-import { RouterLink, RouterView } from "vue-router";
+import { onUpdated } from "vue";
+import { RouterLink, RouterView, onBeforeRouteUpdate } from "vue-router";
 import { mapState } from 'vuex'
 
 export default {
@@ -12,13 +13,17 @@ export default {
     logoutUser(){
       this.$store.dispatch('toggle_current_user')
     }
-},
+  },
 computed: {
   userStatus(){
       return this.$store.state.active_user
-    }
-},
+    },
+  userType(){
+    return this.$store.state.user_type
+  }
+  },
 };
+
 
 </script>
 
@@ -78,11 +83,29 @@ computed: {
               ><img src="@/assets/info.svg" /> Sign Up</router-link
             >
           </li>
-          <li class="nav-item" v-if="userStatus">
+
+          <li class="nav-item" v-if="userStatus & userType=='user'">
             <router-link to="/user/venues" class="nav-link"
+              ><img src="@/assets/movie.svg" /> Venues</router-link
+            >
+          </li>
+          <li class="nav-item" v-if="userStatus & userType=='user'">
+            <router-link to="/user/shows" class="nav-link"
               ><img src="@/assets/movie.svg" /> Shows</router-link
             >
           </li>
+
+          <li class="nav-item" v-if="userStatus & userType=='admin'">
+            <router-link to="/admin/venues" class="nav-link"
+              ><img src="@/assets/movie.svg" /> Venues</router-link
+            >
+          </li>
+          <li class="nav-item" v-if="userStatus & userType=='admin'">
+            <router-link to="/admin/shows" class="nav-link"
+              ><img src="@/assets/movie.svg" /> Shows</router-link
+            >
+          </li>
+
           <li class="nav-item dropdown" v-if="userStatus">
             <a
               class="nav-link dropdown-toggle"

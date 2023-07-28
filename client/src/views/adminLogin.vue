@@ -1,5 +1,95 @@
+<script>
+import ToastMsg from '../components/toastMsg.vue'
+import { fetch_auth_token } from '../api';
+
+export default {
+  name: "AdminLogin",
+  data() {
+    return {
+      auth_token: "",
+      email: "",
+      password: "",
+      header: "",
+      head_end: "",
+      message: "",
+      type: "",
+      toastShow: false,
+    };
+  },
+  methods: {
+    isValidEmail() {
+      return /^[^@]+@\w+(\.\w+)+\w$/.test(this.email);
+    },
+
+    closeToast() {
+      this.toastShow = false;
+    },
+
+    submitForm() {
+      this.type = "info";
+      this.header = "Logging in... Please wait"
+      this.toastShow = true;
+      if (!this.isValidEmail()) {
+        this.type = "error";
+        console.log("Invalid email");
+        this.message = "Invalid email";
+        this.header = "Form Error";
+      }
+      else if (this.password.length < 8) {
+        this.type = "error";
+        console.log("Password Length too short");
+        this.message = "Password Length too short";
+        this.header = "Form Error";
+      }
+      else {
+
+        fetch_auth_token({ email: this.email, password: this.password, user_type: 'admin' })
+          .then(async res => {
+            const data = await res.json()
+
+            if (!res.ok) {
+              this.type = "error";
+              this.message = data.response.errors[0];
+              this.header = "Validation Error";
+            }
+            else {
+              //context.commit('set_auth_token', { auth_token: data['response']['user']['authentication_token']})
+              this.auth_token = data['response']['user']['authentication_token'];
+              localStorage.auth_token = this.auth_token;
+              localStorage.user_type = 'admin';
+              this.$store.commit('set_user_details', { auth_token: this.auth_token, user_type: 'admin' });
+
+              this.$store.commit('toggle_user')
+              this.$router.replace('/admin/home')
+              this.toastShow = false;
+              this.$store.commit('empty_error_message')
+            }
+
+          })
+          .catch(e => {
+            this.type = "error";
+            this.message = e.message;
+            this.header = "Fetch Error"
+          }
+          );
+
+      }
+    },
+  },
+  components: { ToastMsg },
+};
+</script>
+
 <template>
   <div class="body">
+    <ToastMsg 
+      v-bind:header="header" 
+      v-bind:head_end="head_end" 
+      v-bind:message="message" 
+      v-bind:type="type" 
+      v-if="toastShow"
+      @close-toast="closeToast" />
+
     <div class="container-fluid">
       <div class="row d-flex justify-content-center">
         <div class="col-md-9 col-lg-6 col-xl-5">
@@ -18,7 +108,6 @@
           </div>
         </div>
         <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
-          <form class="mt-4" action="/adminLogin" method="post">
             <h3 class="alert alert-primary mb-4"> Enter Details</h3>
             <!-- Email input -->
             <div class="form-floating mb-4">
@@ -26,6 +115,7 @@
                 type="email"
                 id="login_email"
                 name="login_email"
+                v-model="email"
                 class="form-control form-control-lg"
                 placeholder="Enter a valid email address"
               />
@@ -40,6 +130,7 @@
                 type="password"
                 id="login_passwd"
                 name="login_passwd"
+                v-model="password"
                 class="form-control form-control-lg"
                 placeholder="Enter password"
               />
@@ -64,14 +155,13 @@
 
             <div class="d-flex justify-content-center text-lg-start mt-4 pt-2">
               <button
-                type="submit"
+                @click="submitForm"
                 class="btn btn-success btn-lg"
                 style="padding-left: 2.5rem; padding-right: 2.5rem"
               >
                 Login
               </button>
             </div>
-          </form>
         </div>
       </div>
     </div>

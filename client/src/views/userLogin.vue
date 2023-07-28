@@ -52,9 +52,11 @@ export default {
                 //context.commit('set_auth_token', { auth_token: data['response']['user']['authentication_token']})
                 this.auth_token = data['response']['user']['authentication_token'];
                 localStorage.auth_token = this.auth_token;
+                localStorage.user_type = 'user';
+                this.$store.commit('set_user_details', { auth_token: this.auth_token, user_type: 'user' });
 
                 this.$store.commit('toggle_user')
-                this.$router.push('/user/home')
+                this.$router.replace('/user/home')
                 this.toastShow = false;
                 this.$store.commit('empty_error_message')
             }

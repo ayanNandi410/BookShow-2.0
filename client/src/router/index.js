@@ -4,11 +4,13 @@ import startHome from "../views/startHome.vue";
 import adminLogin from "../views/adminLogin.vue";
 import userLogin from "../views/userLogin.vue";
 import userSignup from "../views/userSignup.vue";
-import userHome from "../views/userHome.vue"
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+
+    // User routes
+
     {
       path: "/",
       name: "home",
@@ -18,11 +20,6 @@ const router = createRouter({
       path: "/user/home",
       name: "userHome",
       component: () => import ("../views/userHome.vue"),
-    },
-    {
-      path: "/admin/login",
-      name: "adminLogin",
-      component: adminLogin,
     },
     {
       path: "/user/login",
@@ -44,6 +41,31 @@ const router = createRouter({
       name: "userVenues",
       component: () => import ("../views/userVenues.vue"),
     },
+
+    // Admin Routes
+
+    {
+      path: "/admin/login",
+      name: "adminLogin",
+      component: adminLogin,
+    },
+    {
+      path: "/admin/home",
+      name: "adminHome",
+      component: () => import('../views/adminHome.vue'),
+    },
+    {
+      path: "/admin/venues",
+      name: "adminVenues",
+      component: () => import('../views/adminVenues.vue'),
+    },
+    {
+      path: "/admin/venue/add",
+      name: "addVenue",
+      component: () => import('../views/addVenue.vue'),
+    },
+
+
   ],
 });
 

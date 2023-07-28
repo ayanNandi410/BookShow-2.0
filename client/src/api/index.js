@@ -21,12 +21,26 @@ export function fetchCities() {
   return fetch(`${API_URL}city/all`, requestOptions)
 }
 
-export function fetchVenues(city) {
+export function fetchVenues(city, user_type) {
   const requestOptions = {
     method: "GET",
     headers: { "Content-Type": "application/json" },
   };
-  return fetch(`${API_URL}venues/byCity/${city}`, requestOptions)
+  if(user_type=='admin'){
+    return fetch(`${API_URL}venuesforAdmin/byCity/${city}`, requestOptions)
+  }
+  else{
+    return fetch(`${API_URL}venuesforUser/byCity/${city}`, requestOptions)
+  }
+  
+}
+
+export function deleteVenue(id) {
+  const requestOptions = {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+  };
+  return fetch(`${API_URL}venue/${id}`, requestOptions)
 }
 
 export function fetchSurvey(surveyId) {

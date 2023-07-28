@@ -1,6 +1,6 @@
 <script>
-import ShowCard from "../components/ShowCard.vue";
-import VenueCard from "../components/VenueCard.vue";
+import ShowCard from "../components/UserShowCard.vue";
+import VenueCard from "../components/UserVenueCard.vue";
 
 export default {
   name: "Ping",

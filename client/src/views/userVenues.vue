@@ -1,5 +1,5 @@
 <script>
-import VenueCard from '../components/VenueCard.vue'
+import VenueCard from '../components/UserVenueCard.vue'
 import { fetchVenues } from '../api';
 
 export default {

@@ -1,0 +1,49 @@
+<script setup>
+const props = defineProps({
+  id: String,
+  name: String,
+  capacity: Number,
+  location: String,
+  description: String,
+  timestamp: String,
+});
+</script>
+
+<template>
+    <div class="col">
+        <div class="card p-3" style="width: 18rem; margin-right: 20px;">
+            <div class="card-img-caption">
+                <div class="d-flex justify-content-end">
+                  <span class="card-text badge rounded-pill bg-primary flex-row-reverse"
+                    >Capacity : {{ props.capacity }}</span
+                  >
+                </div>
+                <img
+                  src="@/assets/hall.png"
+                  class="card-img-top blurImage"
+                  height="200"
+                  width="30"
+                  alt="..."
+                />
+            </div>
+          <div class="card-body">
+            <h5 class="card-title">{{ props.name }}</h5>
+            <p class="card-text">
+              <span class="badge rounded-pill bg-secondary" style="padding: 8px 10px;">{{ props.location }}</span>&emsp13;
+            </p>   
+            <a href="#" class="btn btn-primary" onclick="getShows();"
+            data-bs-toggle="offcanvas" data-bs-target="#offcanvasShows" aria-controls="offcanvasShows">Shows</a>&emsp14;
+            <a href="#" class="btn btn-primary btn-success">+ Allocate Show</a>
+          </div>
+          <div class="card-footer text-muted">
+            <p><img src="@/assets/calendar.svg"/> {{ props.timestamp.slice(0,22) }}</p>
+
+            <a href="#" class="btn btn-sm btn-danger" 
+            data-bs-toggle="modal" data-bs-target="#deleteModal" 
+            @click="$emit('deleteVenue',this.name,this.id)">Delete</a>&emsp14;
+
+            <a href="#" class="btn btn-sm btn-warning">Update</a><br/>
+          </div>
+        </div>
+      </div>
+</template>

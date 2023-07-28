@@ -3,14 +3,22 @@ from flask_restful import Resource, Api
 from .api.auth import RegisterAPI
 from .api.test import TestAPI
 from .api.cityApi import GetAllCitiesAPI
-from .api.venueApi import VenueListByCityAPI
+from .api.adminVenueApi import AdminVenueListByCityAPI, AdminVenueAPI
     
 def getConfiguredApi(app):
     apiV = Api(app)
 
+    # Common
     apiV.add_resource(RegisterAPI,"/api/register",endpoint="/register")
     apiV.add_resource(TestAPI,"/api/test",endpoint="/test")
     apiV.add_resource(GetAllCitiesAPI,"/api/city/all",endpoint="/city/all")
-    apiV.add_resource(VenueListByCityAPI,"/api/venues/byCity/<string:city>",endpoint="/venues/byCity")
+    #apiV.add_resource(VenueListByCityAPI,"/api/venues/byCity/<string:city>",endpoint="/venues/byCity")
+
+    # for Admin
+    apiV.add_resource(AdminVenueListByCityAPI,"/api/venuesforAdmin/byCity/<string:city>",endpoint="/venuesforAdmin/byCity")
+    apiV.add_resource(AdminVenueAPI,"/api/venue/<string:id>",endpoint="/venue")
     
+    
+    # for User
+
     return apiV

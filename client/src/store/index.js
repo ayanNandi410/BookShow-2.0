@@ -8,35 +8,15 @@ const state = {
   // single source of data
   auth_token: "",
   error_message: "",
-  active_user: false
+  active_user: false,
+  user_type: "",
 }
 
 const actions = {
   // asynchronous operations
     async load_auth_token(context, user_details){
         console.log("In load_auth_token")
-        fetch_auth_token(user_details)
-        .then(async res =>  {
-            
-              const data = await res.json()
-
-
-            if(!res.ok){
-                context.commit('set_error_message', { error_message: data.response.errors[0]});
-                return false;
-            }
-            else{
-                context.commit('set_auth_token', { auth_token: data['response']['user']['authentication_token']})
-                return true;
-            }
-            
-        })
-        .catch(e => {
-            context.commit('set_error_message', { error_message: e});
-            console.log("Fetch Error: "+e)
-            return false;
-            }
-        );   
+        
     },
 
     async error_message_clear(context){
@@ -51,9 +31,10 @@ const actions = {
 const mutations = {
   // isolated data mutations
 
-  set_auth_token(state, payload){
+  set_user_details(state, payload){
     state.auth_token = payload.auth_token;
-    console.log("Auth-Token updated...")
+    state.user_type = payload.user_type;
+    console.log("User Details updated...")
   },
 
   set_error_message(state, payload){

@@ -19,8 +19,8 @@ defineEmits(['closeToast'])
       <small>{{ props.head_end }}</small>
       <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close" @click="$emit('closeToast')"></button>
     </div>
-    <div class="toast-body placeholder-glow">
-      <div class="spinner-border text-primary" role="status" v-if="props.message==''">
+    <div class="toast-body">
+      <div class="spinner-border spinner-border-sm text-primary" role="status" v-if="props.message==''">
         <span class="visually-hidden">Loading...</span>
       </div>
       {{ props.message }}
