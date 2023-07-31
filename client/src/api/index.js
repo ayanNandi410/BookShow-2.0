@@ -13,6 +13,15 @@ export function fetch_auth_token(user_details){
     return fetch(`${BASE_URL}login?include_auth_token`, requestOptions)
 }
 
+export function logout_user(){
+  const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+    };
+  return fetch(`${BASE_URL}logout`, requestOptions)
+}
+
+
 export function fetchCities() {
   const requestOptions = {
     method: "GET",
@@ -41,6 +50,42 @@ export function deleteVenue(id) {
     headers: { "Content-Type": "application/json" },
   };
   return fetch(`${API_URL}venue/${id}`, requestOptions)
+}
+
+export function addVenue(venue) {
+  const requestOptions = {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(venue),
+  };
+  return fetch(`${API_URL}venue`, requestOptions)
+}
+
+export function addShow(show) {
+  const requestOptions = {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(show),
+  };
+  return fetch(`${API_URL}show`, requestOptions)
+}
+
+export function fetchPopularShows() {
+  const requestOptions = {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  };
+    return fetch(`${API_URL}popularShows`, requestOptions)
+  
+}
+
+export function fetchShowsByVenue(id) {
+  const requestOptions = {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  };
+    return fetch(`${API_URL}show/byVenue/${id}`, requestOptions)
+  
 }
 
 export function fetchSurvey(surveyId) {

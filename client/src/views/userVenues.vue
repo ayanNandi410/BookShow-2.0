@@ -12,7 +12,7 @@ export default {
   },
   methods: {
     load_all_venues(city){
-      fetchVenues(city)
+      fetchVenues(city, 'user')
       .then(async res =>  {
           const data = await res.json()
           console.log(data)
@@ -27,7 +27,7 @@ export default {
           
       })
       .catch(e => {
-          context.commit('set_error_message', { error_message: e});
+        this.error_message = e.data;
           console.log("Fetch Error: "+e)
           }
       );   

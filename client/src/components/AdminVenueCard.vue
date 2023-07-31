@@ -31,9 +31,8 @@ const props = defineProps({
             <p class="card-text">
               <span class="badge rounded-pill bg-secondary" style="padding: 8px 10px;">{{ props.location }}</span>&emsp13;
             </p>   
-            <a href="#" class="btn btn-primary" onclick="getShows();"
+            <a href="#" class="btn btn-primary" onclick="getShows();" @click="$emit('displayShows',this.name,this.id)"
             data-bs-toggle="offcanvas" data-bs-target="#offcanvasShows" aria-controls="offcanvasShows">Shows</a>&emsp14;
-            <a href="#" class="btn btn-primary btn-success">+ Allocate Show</a>
           </div>
           <div class="card-footer text-muted">
             <p><img src="@/assets/calendar.svg"/> {{ props.timestamp.slice(0,22) }}</p>

@@ -3,14 +3,14 @@
     <div class="container-fluid h-custom">
       <div class="row d-flex justify-content-center h-100">
         <div class="col-12 col-sm-4">
-          <div class="justify-content-center">
+          <div class="row">
             <h3 class="alert alert-warning mb-4">Sign Up to book shows!</h3>
-            <br />
+          </div>
+          <div class="row">
             <img
               src="@/assets/signup.png"
-              class="align-items-center"
-              width="300"
-              height="300"
+              width="250"
+              height="420"
             />
           </div>
         </div>

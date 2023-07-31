@@ -95,7 +95,7 @@ class Show(db.Model):
     timestamp = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
 
     venues = db.relationship('Venue',secondary='Allocation',lazy='subquery', viewonly=True)
-    reviews = db.relationship('MovieReview', backref='show', lazy=True, viewonly=True)
+    reviews = db.relationship('MovieReview', backref='show', lazy='subquery', viewonly=True)
 
     def __repr__(self):
         return "< Show : "+self.name+">"
@@ -110,7 +110,7 @@ class Allocation(db.Model):
     avSeats =db.Column('Available Seats',db.Integer,nullable=False)
     price = db.Column('Ticket Price',db.Numeric(10,2), nullable=False)
 
-    bookings = db.relationship('BookTicket', backref='allocShow',lazy=True)
+    bookings = db.relationship('BookTicket', backref='allocShow',lazy='subquery')
     venue = db.relationship('Venue')
     show = db.relationship('Show')
     #venue = db.relationship('Venue', backref= db.backref('DayAllocation', cascade='all, delete-orphan' ))

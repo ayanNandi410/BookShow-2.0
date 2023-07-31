@@ -1,6 +1,6 @@
 <script>
 import AdminVenueCard from '../components/AdminVenueCard.vue'
-import { fetchCities, fetchVenues, deleteVenue } from '../api';
+import { fetchCities, fetchVenues, deleteVenue, fetchShowsByVenue } from '../api';
 
 export default {
   name: "adminVenues",
@@ -8,7 +8,9 @@ export default {
     return {
       venues: [],
       cities: [],
+      showsForVenue: [],
       loading: false,
+      showsLoading: false,
       venueChoice: "",
       deleteResult: false,
     };
@@ -94,11 +96,46 @@ export default {
           console.log("Fetch Error: "+e)
           }
       );   
+  },
+
+  displayShows(name,id){
+    this.venueChoice = { name: name, id: id }
+    this.showsLoading = true;
+    var canvasBody = document.getElementById("fetchShowsError");
+
+    fetchShowsByVenue(this.venueChoice.id)
+      .then(async res =>  {
+          const data = await res.json()
+          console.log(data)
+          this.deleteResult = true;
+          this.showsLoading = false;
+
+          if(!res.ok){
+            this.error_message = data.error_message;
+            this.error_code = data.error_code;
+            canvasBody.innerHTML = "API Error: " + data.error_code + " , " + data.error_message;
+          }
+          else{
+            this.showsForVenue = data;
+          }
+          
+      })
+      .catch(e => {
+        this.showsLoading = false;
+        this.error_message = e.data;
+        canvasBody.innerHTML = "Fetch Error: " + data.error_code + " , " + data.error_message;
+          console.log("Fetch Error: "+e)
+          }
+      ); 
   }
+
 },
 computed: {
     loading(){
         return this.loading;
+    },
+    showsLoading(){
+        return this.showsLoading;
     },
     deleteRes(){
         return this.deleteResult;
@@ -118,6 +155,49 @@ components: { AdminVenueCard },
 <template>
     
 <div class="body container" style="min-height: 100%;">
+
+    <!-- Offcanvas for Shows -->
+  <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasShows" data-bs-scroll="true" data-bs-backdrop="false"
+    aria-labelledby="offcanvasBottomLabel" style="height: 70%;">
+
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="offcanvasShowsTitle" >Shows for : {{ venueChoice.name }}</h5>
+      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">    
+      <div style="margin: auto 50%;">
+        <div class="spinner-border spinner-border-lg text-primary" role="status" v-if="showsLoading">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      </div>
+      <h4 class="alert alert-primary text-center" style="margin: 8% 10% 20%;" 
+        v-if="showsForVenue.length==0">Did not find any venue. Try later..<br/><br/>
+        <p id="fetchShowsError" style="background-color: rgb(110, 164, 164); 
+        width: fit-content; margin: auto; padding: 2px 10px;" ></p>
+      </h4>
+
+      <div class="row row-cols-2 row-cols-sm-5 g-4 mt-4" 
+            style="padding: 5px 20px; margin: auto 10px;" id="cardListShows">
+          <div class="col" v-for="show in showsForVenue">
+            <div class="col">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">{{ show.name }}</h5>
+                  <br/>
+                  <p class="card-text">
+                    Duration : {{ show.duration }}
+                    <br/>
+                    Rating : {{ show.rating }} / 10
+                    </p>
+                  <a href="#" class="btn btn-primary">View Timings</a>
+                </div>
+              </div>
+        </div>
+          </div>
+      </div>
+    </div>
+  </div>
+
     <div class="modal fade" id="deleteModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -175,7 +255,8 @@ components: { AdminVenueCard },
         v-bind:capacity=venue.capacity 
         v-bind:location=venue.location 
         v-bind:timestamp="venue.timestamp"
-        @deleteVenue="deleteVenueModal"/>
+        @deleteVenue="deleteVenueModal"
+        @displayShows="displayShows"/>
     </div>
 </div>
 </template>

@@ -2,17 +2,50 @@
 import { onUpdated } from "vue";
 import { RouterLink, RouterView, onBeforeRouteUpdate } from "vue-router";
 import { mapState } from 'vuex'
+import { logout_user } from '../api'
 
 export default {
   name: "navbar",
   data() {
     return {
+      toastShow: false,
+      header: "",
+      head_end: "",
+      message: "",
+      type: "",
     };
   },
   methods: {
-    logoutUser(){
+    logoutCurrentUser(){
       this.$store.dispatch('toggle_current_user')
-    }
+      localStorage.removeItem('auth_token')
+      localStorage.removeItem('user_type')
+      
+      logout_user()
+      .then(async res =>  {
+          const data = await res.data
+          this.toastShow = true;
+          
+          if(!res.ok){
+            this.head_end = data.error_code;
+            this.message = data.error_message;
+            
+          }
+          else{
+            this.venues = data;
+            this.message = "Success";
+            console.log("Successfully logged out...")
+            this.type = "info";
+          }
+          
+      })
+      .catch(e => {
+        this.message = e.data;
+        console.log("Fetch Error: "+e)
+        
+    });   
+    },
+  
   },
 computed: {
   userStatus(){
@@ -68,8 +101,13 @@ computed: {
               ><img src="@/assets/home.svg" /> Home</router-link
             >
           </li>
-          <li class="nav-item" v-if="userStatus">
+          <li class="nav-item" v-if="userStatus & userType=='user'">
             <router-link to="/user/home" class="nav-link"
+              ><img src="@/assets/home.svg" /> Home</router-link
+            >
+          </li>
+          <li class="nav-item" v-if="userStatus & userType=='admin'">
+            <router-link to="/admin/home" class="nav-link"
               ><img src="@/assets/home.svg" /> Home</router-link
             >
           </li>
@@ -117,14 +155,17 @@ computed: {
               Others
             </a>
             <ul class="dropdown-menu">
-              <li v-if="userStatus">
-                <a class="dropdown-item" href="/user/userProfile"><img src="@/assets/person.svg" /> Profile</a>
+              <li v-if="userStatus & userType=='admin'">
+                <router-link to="/admin/profile" class="dropdown-item"> Profile</router-link>
+              </li>
+              <li v-if="userStatus & userType=='user'">
+                <router-link to="/user/profile" class="dropdown-item"> Profile</router-link>
               </li>
               <li v-if="userStatus">
                 <hr class="dropdown-divider" />
               </li>
               <li v-if="userStatus">
-                <router-link to="/user/login" class="dropdown-item" @click="logoutUser"
+                <router-link to="/user/login" class="dropdown-item" @click="logoutCurrentUser"
               ><img src="@/assets/logout.svg" /> Logout</router-link
             >
               </li>

@@ -1,6 +1,7 @@
 <script> 
 import ToastMsg from '../components/toastMsg.vue'
 import { fetch_auth_token } from '../api';
+import { onMounted } from 'vue';
 
 export default {
   name: "UserLogin",
@@ -26,25 +27,29 @@ export default {
     },
 
     submitForm() {
-      this.type = "error";
+      this.type = "info";
       this.toastShow = true;
+
       if(!this.isValidEmail()){
           console.log("Invalid email");
+          this.type = "error";
           this.message = "Invalid email";
           this.header = "Form Error";
       }
       else if(this.password.length < 8){
         console.log("Password Length too short");
+        this.type = "error";
         this.message = "Password Length too short";
         this.header = "Form Error";
       }
       else{
-        //this.$store.dispatch('load_auth_token', { email: this.email, password: this.password })
+
         fetch_auth_token({ email: this.email, password: this.password })
         .then(async res =>  {
-              const data = await res.json()
+            const data = await res.json()
 
             if(!res.ok){
+              this.type = "error"
               this.message = data.response.errors[0];
               this.header = "Validation Error";
             }
@@ -63,6 +68,7 @@ export default {
             
         })
         .catch(e => {
+            this.type = "error"
             this.message = e.message;
             this.header = "Fetch Error"
             }
@@ -72,6 +78,15 @@ export default {
     },
   },
   components: { ToastMsg },
+
+  onCreated(){
+    if(this.$route.query.access)
+    {
+      this.message = "Please login first...";
+      this.header = "Invalid Access";
+      this.toastShow = true;
+    }
+}
 };
 </script>
 

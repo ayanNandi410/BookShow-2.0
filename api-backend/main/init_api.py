@@ -4,6 +4,8 @@ from .api.auth import RegisterAPI
 from .api.test import TestAPI
 from .api.cityApi import GetAllCitiesAPI
 from .api.adminVenueApi import AdminVenueListByCityAPI, AdminVenueAPI
+from .api.adminShowApi import PopularShowsApi, ShowAPI, ListShowByVenueApi
+from .api.userVenueApi import UserVenueListByCityAPI
     
 def getConfiguredApi(app):
     apiV = Api(app)
@@ -16,9 +18,12 @@ def getConfiguredApi(app):
 
     # for Admin
     apiV.add_resource(AdminVenueListByCityAPI,"/api/venuesforAdmin/byCity/<string:city>",endpoint="/venuesforAdmin/byCity")
-    apiV.add_resource(AdminVenueAPI,"/api/venue/<string:id>",endpoint="/venue")
-    
+    apiV.add_resource(AdminVenueAPI,"/api/venue/<string:id>","/api/venue",endpoint="/venue")
+    apiV.add_resource(PopularShowsApi,"/api/popularShows",endpoint="/popularShows")
+    apiV.add_resource(ShowAPI,"/api/show/<string:id>","/api/show",endpoint="/show")
+    apiV.add_resource(ListShowByVenueApi,"/api/show/byVenue/<string:vid>",endpoint="/show/byVenue")
     
     # for User
+    apiV.add_resource(UserVenueListByCityAPI,"/api/venuesforUser/byCity/<string:city>",endpoint="/venuesforUser/byCity")
 
     return apiV

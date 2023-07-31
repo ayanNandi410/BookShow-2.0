@@ -80,16 +80,17 @@ export default {
       </div>
     </div>
 </div>
-<div class="body vh-100">
-  <div class="container py-5 col-8">
-    <h1 class="display-5 fw-bold">Welcome Admin User</h1>
-    <p class="col-md-8 fs-4">You have reached a place where you can explore all venues available in your City
-      and book your favourite show as well. You may use the links available at the top to begin your journey.
-    </p>
-    <div class="mt-3">
+<div class="body vh-100 container">
+  <div class="jumbotron" style="margin-top: 10%; padding: 5% 10%; background-color: #c7dded;">
+    <h1 class="display-4">Welcome Admin User</h1><br/>
+    <p class="lead">You have reached a place where you can explore all venues available in your City
+        and book your favourite show as well. You may use the links available at the top to begin your journey.</p>
+    <hr class="my-4">
+    <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
+    <p class="lead">
       <button class="btn btn-primary btn-md" type="button" 
-      data-bs-toggle="modal" data-bs-target="#cityModal">See Venues</button> 
-    </div>
-</div>
+        data-bs-toggle="modal" data-bs-target="#cityModal">See Venues</button> 
+    </p>
+  </div>
 </div>
 </template>

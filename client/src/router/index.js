@@ -5,21 +5,44 @@ import adminLogin from "../views/adminLogin.vue";
 import userLogin from "../views/userLogin.vue";
 import userSignup from "../views/userSignup.vue";
 
+
+function guardMyroute(to, from, next)
+{
+ var isAuthenticated= false;
+
+  if(localStorage.auth_token)
+    isAuthenticated = true;
+  else
+    isAuthenticated= false; 
+  
+  if(isAuthenticated) 
+  {
+    next(); // allow to enter route
+  } 
+  else
+  {
+    next({ path: '/user/login', query: { access:'invalid' }}); // go to '/login';
+  }
+}
+
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
 
-    // User routes
+    //Testing
+    {
+      path: "/ping",
+      name: "ping",
+      component: Ping,
+    },
 
+
+    //Anonymous Routes
     {
       path: "/",
       name: "home",
       component: startHome,
-    },
-    {
-      path: "/user/home",
-      name: "userHome",
-      component: () => import ("../views/userHome.vue"),
     },
     {
       path: "/user/login",
@@ -32,39 +55,70 @@ const router = createRouter({
       component: userSignup,
     },
     {
-      path: "/ping",
-      name: "ping",
-      component: Ping,
-    },
-    {
-      path: "/user/venues/forCity/:city",
-      name: "userVenues",
-      component: () => import ("../views/userVenues.vue"),
-    },
-
-    // Admin Routes
-
-    {
       path: "/admin/login",
       name: "adminLogin",
       component: adminLogin,
     },
+
+    // User routes
+    {
+      path: "/user/home",
+      name: "userHome",
+      beforeEnter : guardMyroute,
+      component: () => import ("../views/userHome.vue"),
+    },
+    {
+      path: "/user/profile",
+      name: "userProfile",
+      beforeEnter : guardMyroute,
+      component: () => import ("../views/userProfile.vue"),
+    },
+
+    {
+      path: "/user/venues/forCity/:city",
+      name: "userVenues",
+      beforeEnter : guardMyroute,
+      component: () => import ("../views/userVenues.vue"),
+    },
+
+    
+    // Admin Routes
     {
       path: "/admin/home",
       name: "adminHome",
+      beforeEnter : guardMyroute,
       component: () => import('../views/adminHome.vue'),
+    },
+    {
+      path: "/admin/profile",
+      name: "adminProfile",
+      beforeEnter : guardMyroute,
+      component: () => import ("../views/adminProfile.vue"),
     },
     {
       path: "/admin/venues",
       name: "adminVenues",
+      beforeEnter : guardMyroute,
       component: () => import('../views/adminVenues.vue'),
+    },
+    {
+      path: "/admin/shows",
+      name: "adminShows",
+      beforeEnter : guardMyroute,
+      component: () => import('../views/adminShows.vue'),
     },
     {
       path: "/admin/venue/add",
       name: "addVenue",
+      beforeEnter : guardMyroute,
       component: () => import('../views/addVenue.vue'),
     },
-
+    {
+      path: "/admin/show/add",
+      name: "addShow",
+      beforeEnter : guardMyroute,
+      component: () => import('../views/addShow.vue'),
+    },
 
   ],
 });
