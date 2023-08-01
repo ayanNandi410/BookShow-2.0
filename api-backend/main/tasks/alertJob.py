@@ -1,0 +1,33 @@
+from datetime import datetime, timedelta
+from ..workers import celeryObj
+from ..models import User, Role
+from ..db import db
+from ..send_email import send_email
+from celery.schedules import crontab
+
+@celeryObj.on_after_finalize.connect
+def alert_evening_everyUser(sender, **kwargs):
+    sender.add_periodic_task(
+        crontab(hour=17,minute=42,day_of_week=2),
+        reminder.s(),
+        name = 'at every day'
+    )
+
+@celeryObj.task()
+def reminder():
+    print("Started JOB")
+    role = db.session.query(Role).filter(Role.name == 'user').first()
+    user_list = role.users
+    print(user_list)
+
+    for user in user_list:
+        visited = booked = False
+        startDT = datetime.utcnow() - timedelta(hours=17)
+
+        if(user.last_login_at > startDT):
+            visited = True
+        #print(user.email,visited)
+        if visited:
+            send_email(address=user.email, subject="Hurry! Movies coming up in your theatres", message="Watch now!!!!")
+
+        

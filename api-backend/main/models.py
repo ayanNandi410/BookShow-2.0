@@ -7,6 +7,7 @@ from sqlalchemy import Boolean, DateTime, Column, Integer, \
 from flask_security.models import fsqla_v3 as fsqla
 from sqlalchemy.sql import func
 from datetime import datetime
+from flask_security import UserMixin, RoleMixin
 
 fsqla.FsModels.set_db_info(db)
 
@@ -17,19 +18,21 @@ class RolesUsers(db.Model):
     user_id = db.Column('user_id', db.Integer, db.ForeignKey('user.id'))
     role_id = db.Column('role_id', db.Integer, db.ForeignKey('role.id'))
 
-class Role(db.Model, fsqla.FsRoleMixin):
+class Role(db.Model, RoleMixin):
     __tablename__ = 'role'
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(80), unique=True)
     description = db.Column(db.String(255))
     permissions = db.Column(MutableList.as_mutable(AsaList()), nullable=True)
 
-class User(db.Model, fsqla.FsUserMixin):
+class User(db.Model, UserMixin):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(255), unique=True)
     username = db.Column(db.String(255), unique=True, nullable=True)
     password = db.Column(db.String(255), nullable=False)
+    first_name = db.Column(db.String(255))
+    last_name = db.Column(db.String(255))
     last_login_at = db.Column(db.DateTime())
     current_login_at = db.Column(db.DateTime())
     last_login_ip = db.Column(db.String(100))
@@ -39,7 +42,23 @@ class User(db.Model, fsqla.FsUserMixin):
     fs_uniquifier = db.Column(db.String(64), unique=True, nullable=False)
     confirmed_at = db.Column(db.DateTime())
     roles = relationship('Role', secondary='roles_users',
-                         backref=backref('users', lazy='dynamic'))
+                         backref=backref('users', lazy='subquery'))
+    
+    def getName(self):
+        return self.first_name + " " + self.last_name
+    
+    def getUserName(self):
+        return self.username
+    
+    # Custom User Payload
+    def get_security_payload(self):
+        rv = super().get_security_payload()
+
+        rv['name'] = self.getName()
+        rv['username'] = self.getUserName()
+        rv['isAdmin'] = self.has_role('admin')
+
+        return rv
     
 
 ##########################################################################
