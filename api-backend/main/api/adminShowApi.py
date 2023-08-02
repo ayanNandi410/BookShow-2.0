@@ -6,6 +6,7 @@ from sqlalchemy import select, join, func, exc, desc
 from main.db import db
 from main.validation import NotFoundError, BusinessValidationError
 from datetime import datetime as dt
+from flask_security import auth_required, roles_accepted
 
 # api for handling shows
 
@@ -45,6 +46,8 @@ create_show_parser.add_argument('duration')
 class PopularShowsApi(Resource):
 
     @marshal_with(userShow_output_fields)
+    @auth_required('token')
+    @roles_accepted('admin','user')
     def get(self):
 
         shows = db.session.query(Show).order_by(desc(Show.timestamp)).limit(20).all()
@@ -59,6 +62,8 @@ class ShowAPI(Resource):
 
     # get a show by show name. Show names are assumed to be unique
     @marshal_with(userShow_output_fields)
+    @auth_required('token')
+    @roles_accepted('admin')
     def get(self,name):
         shows = db.session.query(Show).filter(Show.name == name).first()
 
@@ -68,6 +73,8 @@ class ShowAPI(Resource):
             raise NotFoundError(error_message='Show not found',status_code=404,error_code="SW001")
 
     # create a new show
+    @auth_required('token')
+    @roles_accepted('admin')
     def post(self):
         vn_args = create_show_parser.parse_args()
         name = vn_args.get('name',None)
@@ -131,6 +138,8 @@ class ShowAPI(Resource):
             raise BusinessValidationError(status_code=500,error_code="SW017",error_message="Add Transaction failed. Try again")
 
     # update existing show
+    @auth_required('token')
+    @roles_accepted('admin')
     def put(self):
         vn_args = create_show_parser.parse_args()
         name = vn_args.get('name',None)
@@ -197,8 +206,10 @@ class ShowAPI(Resource):
             raise BusinessValidationError(status_code=500,error_code="SW018",error_message="Update Transaction failed. Try again")
 
     # delete existing show
-    def delete(self,name):
-        show = db.session.query(Show).filter(Show.name == name).first()
+    @auth_required('token')
+    @roles_accepted('admin')
+    def delete(self,id):
+        show = db.session.query(Show).filter(Show.id == id).first()
 
         if not show:
             raise BusinessValidationError(status_code=400,error_code="SW001",error_message="Show not found with such name")
@@ -222,6 +233,8 @@ class ShowAPI(Resource):
 class ListShowByVenueApi(Resource):
 
     @marshal_with(userShow_output_fields)
+    @auth_required('token')
+    @roles_accepted('admin')
     def get(self,vid):
         venue = db.session.query(Venue).filter(Venue.id == vid).first()
         shows = venue.shows

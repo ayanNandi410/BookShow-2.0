@@ -4,6 +4,7 @@ from ..models import Venue, Allocation, Show
 from main.db import db
 from main.validation import NotFoundError, BusinessValidationError
 from sqlalchemy import desc, exc
+from flask_security import auth_required, roles_accepted
 
 # Output JSON format
 venue_output_fields = {
@@ -30,6 +31,8 @@ class AdminVenueAPI(Resource):
 
     # get Venue by Name
     @marshal_with(venue_output_fields)
+    @auth_required('token')
+    @roles_accepted('admin')
     def get(self,id):
         venue = db.session.query(Venue).filter(Venue.id == id).first()
 
@@ -39,6 +42,8 @@ class AdminVenueAPI(Resource):
             raise NotFoundError(error_message='Venue not found',status_code=404,error_code="VN001")
 
     # Create new Venue
+    @auth_required('token')
+    @roles_accepted('admin')
     def post(self):
         vn_args = create_venue_parser.parse_args()
         name = vn_args.get('name',None)
@@ -86,6 +91,8 @@ class AdminVenueAPI(Resource):
 
 
     # Update existing venue
+    @auth_required('token')
+    @roles_accepted('admin')
     def put(self):
         vn_args = create_venue_parser.parse_args()
         id = vn_args.get('id',None)
@@ -136,6 +143,8 @@ class AdminVenueAPI(Resource):
 
     
     # Delete existing venue
+    @auth_required('token')
+    @roles_accepted('admin')
     def delete(self,id):
         venue = db.session.query(Venue).filter(Venue.id == id).first()
 
@@ -162,6 +171,8 @@ class AdminVenueAPI(Resource):
 class AdminVenueListByCityAPI(Resource):
 
     @marshal_with(venue_output_fields)
+    @auth_required('token')
+    @roles_accepted('admin')
     def get(self,city):
         venues = db.session.query(Venue).filter(Venue.city == city).order_by(desc(Venue.timestamp)).all()
 
