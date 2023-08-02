@@ -1,13 +1,13 @@
 <script> 
 import ToastMsg from '../components/toastMsg.vue'
-import { fetch_auth_token } from '../api';
+import { fetch_auth_token, logout_user } from '../api';
 import { onMounted } from 'vue';
 
 export default {
   name: "UserLogin",
   data() {
     return {
-      auth_token: "",
+      user_details: {},
       email: "",
       password: "",
       header: "",
@@ -26,9 +26,47 @@ export default {
       this.toastShow = false;
     },
 
+    invalid_logout(){
+      this.type = "error"
+      this.message = "Admin Login not allowed";
+      this.header = "Validation Error";
+
+      // this.$store.dispatch('toggle_current_user');
+      
+      logout_user()
+        .then(async res => {
+          const data = await res.data
+          this.toastShow = true;
+
+          if (!res.ok) {
+            this.head_end = data.error_code;
+            this.message = data.error_message;
+
+          }
+          else {
+            console.log("Successfully logged out...")
+          }
+
+        })
+        .catch(e => {
+          this.message = e.data;
+          console.log("Fetch Error: " + e)
+
+        });
+    },
+
+    setLocalStorage(data){
+      localStorage.auth_token = data['response']['user']['authentication_token'];
+      localStorage.name = data['response']['user']['name'];
+      localStorage.username = data['response']['user']['username'];
+      localStorage.email = this.email;
+      localStorage.type = "user";
+    },
+
     submitForm() {
       this.type = "info";
       this.toastShow = true;
+      this.header = "Logging in...";
 
       if(!this.isValidEmail()){
           console.log("Invalid email");
@@ -54,16 +92,30 @@ export default {
               this.header = "Validation Error";
             }
             else{
-                //context.commit('set_auth_token', { auth_token: data['response']['user']['authentication_token']})
-                this.auth_token = data['response']['user']['authentication_token'];
-                localStorage.auth_token = this.auth_token;
-                localStorage.user_type = 'user';
-                this.$store.commit('set_user_details', { auth_token: this.auth_token, user_type: 'user' });
+                const isAdmin = data['response']['user']['isAdmin'];
 
-                this.$store.commit('toggle_user')
-                this.$router.replace('/user/home')
-                this.toastShow = false;
-                this.$store.commit('empty_error_message')
+                if(isAdmin){
+                  this.invalid_logout();
+                }
+                else{
+                  
+                  this.user_details = {
+                    auth_token: data['response']['user']['authentication_token'],
+                    name: data['response']['user']['name'],
+                    username: data['response']['user']['username'],
+                    email: this.email,
+                    type: "user",
+                  };
+
+                  this.setLocalStorage(data);
+
+                  this.$store.commit('set_user_details', this.user_details);
+
+                  this.$store.commit('toggle_user')
+                  this.$router.replace('/user/home')
+                  this.toastShow = false;
+                  this.$store.commit('empty_error_message')
+                }
             }
             
         })
@@ -79,7 +131,7 @@ export default {
   },
   components: { ToastMsg },
 
-  onCreated(){
+  onUpdated(){
     if(this.$route.query.access)
     {
       this.message = "Please login first...";

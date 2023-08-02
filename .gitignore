@@ -1,0 +1,9 @@
+node_modules
+package-lock.json
+
+
+env
+
+ticketdb.sqlite
+__pycache__
+celerybeat-schedule

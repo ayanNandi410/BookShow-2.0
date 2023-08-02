@@ -13,6 +13,15 @@ export function fetch_auth_token(user_details){
     return fetch(`${BASE_URL}login?include_auth_token`, requestOptions)
 }
 
+export function register_user(user_details){
+    const requestOptions = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(user_details)
+      };
+    return fetch(`${BASE_URL}register`, requestOptions)
+}
+
 export function logout_user(){
   const requestOptions = {
       method: "POST",
@@ -86,6 +95,24 @@ export function fetchShowsByVenue(id) {
   };
     return fetch(`${API_URL}show/byVenue/${id}`, requestOptions)
   
+}
+
+export function fetchTimings(details) {
+  const requestOptions = {
+    method: "GET",
+    headers: { "Content-Type": "application/json" }
+  };
+    return fetch(`${API_URL}timingWithRange?startDate=${details.startDate}
+                &endDate=${details.endDate}&sid=${details.sid}&vid=${details.vid}`, requestOptions)
+  
+}
+
+export function deleteTiming(id) {
+  const requestOptions = {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+  };
+  return fetch(`${API_URL}timing/${id}`, requestOptions)
 }
 
 export function fetchSurvey(surveyId) {

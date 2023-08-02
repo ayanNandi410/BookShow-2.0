@@ -1,5 +1,106 @@
+<script>
+import ToastMsg from '../components/toastMsg.vue'
+import { register_user } from '../api';
+import { onMounted } from 'vue';
+
+export default {
+  name: "UserLogin",
+  data() {
+    return {
+      auth_token: "",
+      first_name: "",
+      last_name: "",
+      username: "",
+      email: "",
+      password: "",
+      rep_password: "",
+      header: "",
+      head_end: "",
+      message: "",
+      type: "",
+      toastShow: false,
+    };
+  },
+  methods: {
+    isValidEmail() {
+      return /^[^@]+@\w+(\.\w+)+\w$/.test(this.email);
+    },
+
+    closeToast() {
+      this.toastShow = false;
+    },
+
+    submitForm() {
+      this.type = "info";
+      this.toastShow = true;
+
+      if (!this.isValidEmail()) {
+        console.log("Invalid email");
+        this.type = "error";
+        this.message = "Invalid email";
+        this.header = "Form Error";
+      }
+      else if (this.password.length < 8) {
+        console.log("Password Length too short");
+        this.type = "error";
+        this.message = "Password Length too short";
+        this.header = "Form Error";
+      }
+      else if(this.password != this.rep_password) {
+        document.getElementById('passwdCheck').style.display = "block";
+      }
+      else {
+        document.getElementById('passwdCheck').style.display = "none";
+
+        register_user(
+          {
+            first_name: this.first_name,
+            last_name: this.last_name,
+            username: this.username,
+            email: this.email,
+            password: this.password,
+          })
+          .then(async res => {
+            const data = await res.json()
+
+            if (!res.ok) {
+              this.type = "error"
+              this.message = data.response.errors[0];
+              this.header = "Validation Error";
+            }
+            else {
+              this.type = "info";
+              this.header = "User Registration"
+              this.message = "Registered successfully...";
+            }
+
+          })
+          .catch(e => {
+            this.type = "error"
+            this.message = e.message;
+            this.header = "Fetch Error"
+          }
+          );
+
+      }
+    },
+  },
+  components: { ToastMsg },
+
+};
+</script>
+
 <template>
   <div class="body">
+      
+      <ToastMsg 
+      v-bind:header="header" 
+      v-bind:head_end="head_end" 
+      v-bind:message="message" 
+      v-bind:type="type" 
+      v-if="toastShow"
+      @close-toast="closeToast" />
+
     <div class="container-fluid h-custom">
       <div class="row d-flex justify-content-center h-100">
         <div class="col-12 col-sm-4">
@@ -17,9 +118,7 @@
         <div class="col-12 col-sm-5 offset-1">
           <form
             class="mt-4"
-            action="/userSignup"
-            method="post"
-            onsubmit="return formValidate();"
+            onsubmit="return false;"
           >
             <!-- Name input -->
             <div class="row mb-4">
@@ -31,6 +130,7 @@
                     name="signup_firstname"
                     class="form-control form-control-lg"
                     placeholder="First Name"
+                    v-model="first_name"
                     required
                   />
                   <label for="signup_firstname"> First Name</label>
@@ -45,12 +145,26 @@
                     name="signup_lastname"
                     class="form-control form-control-lg"
                     placeholder="Last Name"
+                    v-model="last_name"
                     required
                   />
                   <label for="signup_lastname"> Last Name</label>
                 </div>
               </div>
             </div>
+
+              <div class="form-floating mb-4 col-12">
+                <input
+                  type="text"
+                  id="signup_username"
+                  name="signup_username"
+                  class="form-control form-control-lg"
+                  placeholder="Enter a valid username"
+                  v-model="username"
+                  required
+                />
+                <label class="form-label" for="signup_email">Username</label>
+              </div>
 
             <div class="form-floating mb-4 col-12">
               <input
@@ -59,6 +173,7 @@
                 name="signup_email"
                 class="form-control form-control-lg"
                 placeholder="Enter a valid email address"
+                v-model="email"
                 required
               />
               <label class="form-label" for="signup_email">Email address</label>
@@ -73,6 +188,7 @@
                 class="form-control form-control-lg"
                 placeholder="Enter password"
                 minlength="6"
+                v-model="password"
                 required
               />
               <label class="form-label" for="signup_passwd">Password</label>
@@ -87,6 +203,7 @@
                 class="form-control form-control-lg"
                 placeholder="Retype password"
                 minlength="6"
+                v-model="rep_password"
                 required
               />
               <label class="form-label" for="signup_check_passwd"
@@ -99,8 +216,8 @@
 
             <div class="text-lg-start mt-4 pt-2">
               <button
-                type="submit"
                 class="btn btn-success btn-lg"
+                @click="submitForm"
                 style="padding-left: 2.5rem; padding-right: 2.5rem"
               >
                 Register

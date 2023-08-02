@@ -7,6 +7,9 @@ import { fetch_auth_token } from '../api'
 const state = {
   // single source of data
   auth_token: "",
+  name: "",
+  email: "",
+  username: "",
   error_message: "",
   active_user: false,
   user_type: "",
@@ -33,7 +36,10 @@ const mutations = {
 
   set_user_details(state, payload){
     state.auth_token = payload.auth_token;
-    state.user_type = payload.user_type;
+    state.name = payload.name;
+    state.username = payload.username;
+    state.email = payload.email;
+    state.user_type = payload.type;
     console.log("User Details updated...")
   },
 

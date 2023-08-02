@@ -18,8 +18,12 @@ export default {
   methods: {
     logoutCurrentUser(){
       this.$store.dispatch('toggle_current_user')
-      localStorage.removeItem('auth_token')
-      localStorage.removeItem('user_type')
+      localStorage.removeItem("auth_token");
+      localStorage.removeItem("email");
+      localStorage.removeItem("name");
+      localStorage.removeItem("username");
+      localStorage.removeItem("type");
+
       
       logout_user()
       .then(async res =>  {
@@ -45,7 +49,7 @@ export default {
         
     });   
     },
-  
+
   },
 computed: {
   userStatus(){
@@ -54,6 +58,10 @@ computed: {
   userType(){
     return this.$store.state.user_type
   }
+  },
+
+  created() {
+    localStorage.clear();
   },
 };
 

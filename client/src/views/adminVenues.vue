@@ -127,6 +127,16 @@ export default {
           console.log("Fetch Error: "+e)
           }
       ); 
+  },
+
+  showTimings(showDetails){
+    const details = {
+      showId: showDetails.id,
+      showName: showDetails.name,
+      venueId: this.venueChoice.id,
+      venueName: this.venueChoice.name
+    }
+    this.$router.push({ path: '/admin/timings/view', query: details })
   }
 
 },
@@ -189,7 +199,8 @@ components: { AdminVenueCard },
                     <br/>
                     Rating : {{ show.rating }} / 10
                     </p>
-                  <a href="#" class="btn btn-primary">View Timings</a>
+                  <a class="btn btn-primary" @click="showTimings({ 
+                    name: show.name, id: show.id })">View Timings</a>
                 </div>
               </div>
         </div>

@@ -119,6 +119,12 @@ const router = createRouter({
       beforeEnter : guardMyroute,
       component: () => import('../views/addShow.vue'),
     },
+    {
+      path: "/admin/timings/view",
+      name: "displayTimings",
+      beforeEnter : guardMyroute,
+      component: () => import('../views/adminTimings.vue'),
+    },
 
   ],
 });
