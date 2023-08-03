@@ -6,7 +6,7 @@ export default {
   name: "userHome",
   data() {
     return {
-      auth_token: "",
+      user : this.$store.getters.fetch_user_details,
       cities: [],
       error_code: "",
       error_message: "",
@@ -79,7 +79,7 @@ export default {
 </div>
 <div class="body vh-100">
   <div class="container py-5 col-8">
-    <h1 class="display-5 fw-bold">Welcome {{  }}</h1>
+    <h1 class="display-5 fw-bold">Welcome <i>{{ user.name }}</i></h1>
     <p class="col-md-8 fs-4">You have reached a place where you can explore all venues available in your City
       and book your favourite show as well. You may use the links available at the top to begin your journey.
     </p>

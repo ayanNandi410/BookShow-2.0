@@ -1,7 +1,9 @@
+
 <script> 
 import ToastMsg from '../components/toastMsg.vue'
 import { fetch_auth_token, logout_user } from '../api';
-import { onMounted } from 'vue';
+import { onMounted, onUpdated } from 'vue';
+
 
 export default {
   name: "UserLogin",
@@ -17,6 +19,16 @@ export default {
       toastShow: false,
     };
   },
+
+  mounted() {
+    if(this.$route.query.access)
+    {
+      this.message = "Please login first...";
+      this.header = "Invalid Access";
+      this.toastShow = true;
+    }
+  },
+
   methods: {
     isValidEmail() {
       return /^[^@]+@\w+(\.\w+)+\w$/.test(this.email);
@@ -131,14 +143,6 @@ export default {
   },
   components: { ToastMsg },
 
-  onUpdated(){
-    if(this.$route.query.access)
-    {
-      this.message = "Please login first...";
-      this.header = "Invalid Access";
-      this.toastShow = true;
-    }
-}
 };
 </script>
 

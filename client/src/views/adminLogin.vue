@@ -1,6 +1,6 @@
 <script>
 import ToastMsg from '../components/toastMsg.vue'
-import { fetch_auth_token } from '../api';
+import { fetch_auth_token, logout_user } from '../api';
 
 export default {
   name: "AdminLogin",
@@ -25,54 +25,106 @@ export default {
       this.toastShow = false;
     },
 
+    invalid_logout(){
+      this.type = "error"
+      this.message = "User Login not allowed";
+      this.header = "Validation Error";
+
+      // this.$store.dispatch('toggle_current_user');
+      
+      logout_user()
+        .then(async res => {
+          const data = await res.data
+          this.toastShow = true;
+
+          if (!res.ok) {
+            this.head_end = data.error_code;
+            this.message = data.error_message;
+
+          }
+          else {
+            console.log("Successfully logged out...")
+          }
+
+        })
+        .catch(e => {
+          this.message = e.data;
+          console.log("Fetch Error: " + e)
+
+        });
+    },
+
+    setLocalStorage(data){
+      localStorage.auth_token = data['response']['user']['authentication_token'];
+      localStorage.name = data['response']['user']['name'];
+      localStorage.username = data['response']['user']['username'];
+      localStorage.email = this.email;
+      localStorage.type = "admin";
+    },
+
     submitForm() {
       this.type = "info";
-      this.header = "Logging in... Please wait"
       this.toastShow = true;
-      if (!this.isValidEmail()) {
-        this.type = "error";
-        console.log("Invalid email");
-        this.message = "Invalid email";
-        this.header = "Form Error";
+      this.header = "Logging in...";
+
+      if(!this.isValidEmail()){
+          console.log("Invalid email");
+          this.type = "error";
+          this.message = "Invalid email";
+          this.header = "Form Error";
       }
-      else if (this.password.length < 8) {
-        this.type = "error";
+      else if(this.password.length < 8){
         console.log("Password Length too short");
+        this.type = "error";
         this.message = "Password Length too short";
         this.header = "Form Error";
       }
-      else {
+      else{
 
-        fetch_auth_token({ email: this.email, password: this.password, user_type: 'admin' })
-          .then(async res => {
+        fetch_auth_token({ email: this.email, password: this.password })
+        .then(async res =>  {
             const data = await res.json()
 
-            if (!res.ok) {
-              this.type = "error";
+            if(!res.ok){
+              this.type = "error"
               this.message = data.response.errors[0];
               this.header = "Validation Error";
             }
-            else {
-              //context.commit('set_auth_token', { auth_token: data['response']['user']['authentication_token']})
-              this.auth_token = data['response']['user']['authentication_token'];
-              localStorage.auth_token = this.auth_token;
-              localStorage.user_type = 'admin';
-              this.$store.commit('set_user_details', { auth_token: this.auth_token, user_type: 'admin' });
+            else{
+                const isAdmin = data['response']['user']['isAdmin'];
 
-              this.$store.commit('toggle_user')
-              this.$router.replace('/admin/home')
-              this.toastShow = false;
-              this.$store.commit('empty_error_message')
+                if(!isAdmin){
+                  this.invalid_logout();
+                }
+                else{
+                  
+                  this.user_details = {
+                    auth_token: data['response']['user']['authentication_token'],
+                    name: data['response']['user']['name'],
+                    username: data['response']['user']['username'],
+                    email: this.email,
+                    type: "admin",
+                  };
+
+                  this.setLocalStorage(data);
+
+                  this.$store.commit('set_user_details', this.user_details);
+
+                  this.$store.commit('toggle_user')
+                  this.$router.replace('/admin/home')
+                  this.toastShow = false;
+                  this.$store.commit('empty_error_message')
+                }
             }
-
-          })
-          .catch(e => {
-            this.type = "error";
+            
+        })
+        .catch(e => {
+            this.type = "error"
             this.message = e.message;
             this.header = "Fetch Error"
-          }
-          );
-
+            }
+        );   
+        
       }
     },
   },

@@ -4,7 +4,7 @@ export default {
   name: "userHome",
   data() {
     return {
-      auth_token: "",
+      user : this.$store.getters.fetch_user_details,
     };
   },
   methods: {
@@ -28,7 +28,9 @@ export default {
     <div class="row">
       <div class="col-12 col-sm-8">
         <h1 class="display-5 fw-bold">User Profile</h1>
-        <p class="col-md-8 fs-4"><br/>Name : <b>{{ }}</b><br/>Email : <b>{{  }}</b></p>
+        <p class="col-md-8 fs-4"><br/>Name : <b>{{ user.name }}</b>
+          <br/>Email : <b>{{ user.email }}</b>
+          <br/>Username : <b>{{ user.username }}</b></p>
       </div>
       <div class="col-12 col-sm-4">
         <img src="@/assets/user.png" width="200" height="200">

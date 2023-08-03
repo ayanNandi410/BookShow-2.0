@@ -43,6 +43,15 @@ const mutations = {
     console.log("User Details updated...")
   },
 
+  set_user_details_from_local(state){
+    state.auth_token = localStorage.auth_token;
+    state.name = localStorage.name;
+    state.username = localStorage.username;
+    state.email = localStorage.email;
+    state.user_type = localStorage.type;
+    console.log("User Details updated from Local Storage...")
+  },
+
   set_error_message(state, payload){
     state.error_message = payload.error_message;
     console.log("New Error Message: "+state.error_message)
@@ -61,7 +70,15 @@ const mutations = {
 }
 
 const getters = {
-  // reusable data accessors
+  fetch_user_details(state){
+    return {
+      auth_token: state.auth_token,
+      name: state.name,
+      email: state.email,
+      username: state.username,
+      type: state.type
+    }
+  }
 
 }
 

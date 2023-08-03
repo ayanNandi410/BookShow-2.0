@@ -1,5 +1,6 @@
 <script setup>
 const props = defineProps({
+  id: String,
   name: String,
   rating: Number,
   duration: String,
@@ -52,7 +53,8 @@ const props = defineProps({
             </div>
             <div class="card-footer text-muted">
                 <p><img src="@/assets/calendar.svg"/> {{ props.timestamp.slice(0,22) }}</p>
-              <a href="#" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</a>&emsp14;
+              <a href="#" class="btn btn-sm btn-danger" data-bs-toggle="modal"
+              @click="$emit('deleteShow',props.name,props.id)" data-bs-target="#deleteModal">Delete</a>&emsp14;
               <a href="#" class="btn btn-sm btn-warning">Update</a>
             </div>
           </div>

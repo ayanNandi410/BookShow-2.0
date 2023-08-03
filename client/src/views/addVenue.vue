@@ -6,7 +6,7 @@ export default {
   name: "addVenue",
   data() {
     return {
-      auth_token: "",
+      user : this.$store.getters.fetch_user_details,
       toastShow: false,
       header: "",
       head_end: "",
@@ -31,7 +31,7 @@ export default {
     this.type = "error"
 
     const venue = { name: this.name, location:this.location, city:this.city, capacity:this.capacity, description: this.desc}
-    addVenue(venue)
+    addVenue(this.user.auth_token,venue)
       .then(async res =>  {
           const data = await res.json()
           this.toastShow = true;
@@ -92,12 +92,8 @@ export default {
   },
 
   onMounted(){
-    if(localStorage.auth_token){
-      this.auth_token = localStorage.auth_token;
-    }
-    else{
-        this.$router.push('/admin/login');
-    }
+    this.$store.commit('set_user_details_from_local');
+    this.user = this.$store.getters.fetch_user_details;
   },
   components: { ToastMsg },
 };

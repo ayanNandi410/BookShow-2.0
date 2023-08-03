@@ -173,7 +173,7 @@ computed: {
                 <hr class="dropdown-divider" />
               </li>
               <li v-if="userStatus">
-                <router-link to="/user/login" class="dropdown-item" @click="logoutCurrentUser"
+                <router-link to="/?access=loggedOut" class="dropdown-item" @click="logoutCurrentUser"
               ><img src="@/assets/logout.svg" /> Logout</router-link
             >
               </li>

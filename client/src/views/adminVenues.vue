@@ -1,21 +1,32 @@
 <script>
 import AdminVenueCard from '../components/AdminVenueCard.vue'
+import ToastMsg from '../components/toastMsg.vue'
 import { fetchCities, fetchVenues, deleteVenue, fetchShowsByVenue } from '../api';
 
 export default {
   name: "adminVenues",
   data() {
     return {
+      user : this.$store.getters.fetch_user_details,
       venues: [],
       cities: [],
       showsForVenue: [],
       loading: false,
       showsLoading: false,
       venueChoice: "",
-      deleteResult: false,
+      toastShow: false,
+      header: "",
+      head_end: "",
+      message: "",
+      type: "",
     };
   },
   methods: {
+
+    closeToast() {
+      this.toastShow = false;
+    },
+
     load_all_cities(){
       fetchCities()
       .then(async res =>  {
@@ -23,8 +34,8 @@ export default {
           console.log(data)
           
           if(!res.ok){
-            this.error_message = data.error_message;
-            this.error_code = data.error_code;
+            this.head_end = data.error_code;
+            this.message = data.error_message;
           }
           else{
             this.cities = data.cities;
@@ -43,14 +54,14 @@ export default {
     var city = e.value;
     this.loading = true;
 
-      fetchVenues(city,'admin')
+      fetchVenues(this.user.auth_token,city,'admin')
       .then(async res =>  {
           const data = await res.json()
           console.log(data)
           
           if(!res.ok){
-            this.error_message = data.error_message;
-            this.error_code = data.error_code;
+            this.head_end = data.error_code;
+            this.message = data.error_message;
             this.loading = false;
           }
           else{
@@ -71,29 +82,29 @@ export default {
   },
 
   deleteChoosenVenue(){
-    var delRes = document.getElementById("deleteResult");
+    this.type = "error";
+    this.toastShow = true;
+    this.header = "Delete Venue";
 
-    deleteVenue(this.venueChoice.id)
+    deleteVenue(this.user.auth_token,this.venueChoice.id)
       .then(async res =>  {
           const data = await res.json()
           console.log(data)
-          this.deleteResult = true;
 
           if(!res.ok){
-            this.error_message = data.error_message;
-            this.error_code = data.error_code;
-            delRes.innerHTML = data.error_code + " , " + data.error_message;
+            this.head_end = data.error_code;
+            this.message = data.error_message;
           }
           else{
+            this.message = "Success";
+            this.type = "info";
             this.fetchVenuesforCity();
-            delRes.innerHTML = "Success."
           }
           
       })
       .catch(e => {
-        this.error_message = e.data;
-        delRes.innerHTML = data.error_code + " , " + data.error_message;
-          console.log("Fetch Error: "+e)
+        this.message = e.data;
+        console.log("Fetch Error: "+e)
           }
       );   
   },
@@ -147,15 +158,17 @@ computed: {
     showsLoading(){
         return this.showsLoading;
     },
-    deleteRes(){
-        return this.deleteResult;
-    }
 },
 
-components: { AdminVenueCard },
+components: { AdminVenueCard, ToastMsg },
 
   beforeMount() {
     this.load_all_cities();
+  },
+
+  onMounted(){
+    this.$store.commit('set_user_details_from_local');
+    this.user = this.$store.getters.fetch_user_details;
   }
 
 };
@@ -165,6 +178,14 @@ components: { AdminVenueCard },
 <template>
     
 <div class="body container" style="min-height: 100%;">
+
+  <ToastMsg 
+    v-bind:header="header" 
+    v-bind:head_end="head_end" 
+    v-bind:message="message" 
+    v-bind:type="type" 
+    v-if="toastShow"
+    @close-toast="closeToast" />
 
     <!-- Offcanvas for Shows -->
   <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasShows" data-bs-scroll="true" data-bs-backdrop="false"
@@ -223,7 +244,7 @@ components: { AdminVenueCard },
       <div class="modal-footer">
         <p id="deleteResult"></p>
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <a href="#" id="venueDeleteBt" class="btn btn-primary" @click="deleteChoosenVenue">Delete Venue</a>
+        <a href="#" id="venueDeleteBt" class="btn btn-primary" data-bs-dismiss="modal" @click="deleteChoosenVenue">Delete Venue</a>
       </div>
         </div>
     </div>

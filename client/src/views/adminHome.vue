@@ -6,7 +6,7 @@ export default {
   name: "adminHome",
   data() {
     return {
-      auth_token: "",
+      user : this.$store.getters.fetch_user_details,
       cities: [],
       error_code: "",
       error_message: "",
@@ -53,6 +53,8 @@ export default {
     }
   },
 
+  computed: {
+  }
 };
 </script>
 
@@ -82,7 +84,7 @@ export default {
 </div>
 <div class="body vh-100 container">
   <div class="jumbotron" style="margin-top: 10%; padding: 5% 10%; background-color: #c7dded;">
-    <h1 class="display-4">Welcome Admin User</h1><br/>
+    <h1 class="display-4">Welcome <i>{{ user.name }}</i></h1><br/>
     <p class="lead">You have reached a place where you can explore all venues available in your City
         and book your favourite show as well. You may use the links available at the top to begin your journey.</p>
     <hr class="my-4">

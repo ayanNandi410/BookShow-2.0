@@ -1,9 +1,49 @@
-<script setup>
-import toastMsg from '../components/toastMsg.vue';
+<script>
+import ToastMsg from '../components/toastMsg.vue';
+
+export default {
+  name: "startHome",
+  data() {
+    return {
+      header: "",
+      message: "",
+      head_end: "",
+      type: "",
+      toastShow: false,
+    };
+  },
+  mounted(){
+    console.log(this.$route.query.access);
+    if(this.$route.query.access)
+    {
+      this.message = "Logged out successfully...";
+      this.header = "Logout";
+      this.type = "info"
+      this.toastShow = true;
+    }
+  },
+  
+  methods: {
+
+  closeToast(){
+      this.toastShow = false;
+  },
+  },
+
+  components: { ToastMsg },
+};
 </script>
 
 <template>
   <div class="container text-center" style="height: 100vh">
+    <ToastMsg 
+    v-bind:header="header" 
+    v-bind:head_end="head_end" 
+    v-bind:message="message" 
+    v-bind:type="type" 
+    v-if="toastShow"
+    @close-toast="closeToast" />
+
     <div class="row justify-content-md-center" style="margin-top: 10%">
       <div class="col-10 col-md-4 mb-3">
         <div class="card">
@@ -31,5 +71,4 @@ import toastMsg from '../components/toastMsg.vue';
       </div>
     </div>
   </div>
-  <toastMsg header="Error" message="Helooooooooooooo"/>
 </template>

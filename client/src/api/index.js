@@ -39,10 +39,10 @@ export function fetchCities() {
   return fetch(`${API_URL}city/all`, requestOptions)
 }
 
-export function fetchVenues(city, user_type) {
+export function fetchVenues(token, city, user_type) {
   const requestOptions = {
     method: "GET",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", "Authentication-Token": token },
   };
   if(user_type=='admin'){
     return fetch(`${API_URL}venuesforAdmin/byCity/${city}`, requestOptions)
@@ -53,45 +53,53 @@ export function fetchVenues(city, user_type) {
   
 }
 
-export function deleteVenue(id) {
+export function deleteVenue(token,id) {
   const requestOptions = {
     method: "DELETE",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", "Authentication-Token": token },
   };
   return fetch(`${API_URL}venue/${id}`, requestOptions)
 }
 
-export function addVenue(venue) {
+export function addVenue(token,venue) {
   const requestOptions = {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", "Authentication-Token": token },
     body: JSON.stringify(venue),
   };
   return fetch(`${API_URL}venue`, requestOptions)
 }
 
-export function addShow(show) {
+export function addShow(token,show) {
   const requestOptions = {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", "Authentication-Token": token },
     body: JSON.stringify(show),
   };
   return fetch(`${API_URL}show`, requestOptions)
 }
 
-export function fetchPopularShows() {
+export function deleteShow(token,id) {
+  const requestOptions = {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json", "Authentication-Token": token },
+  };
+  return fetch(`${API_URL}show/${id}`, requestOptions)
+}
+
+export function fetchPopularShows(token) {
   const requestOptions = {
     method: "GET",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", "Authentication-Token": token },
   };
     return fetch(`${API_URL}popularShows`, requestOptions)
   
 }
 
-export function fetchShowsByVenue(id) {
+export function fetchShowsByVenue(token,id) {
   const requestOptions = {
     method: "GET",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", "Authentication-Token": token },
   };
     return fetch(`${API_URL}show/byVenue/${id}`, requestOptions)
   

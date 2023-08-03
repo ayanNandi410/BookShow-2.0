@@ -42,8 +42,8 @@ export default {
                     this.loading = false;
 
                     if (!res.ok) {
-                        this.error_message = data.error_message;
-                        this.error_code = data.error_code;
+                        this.head_end = data.error_code;
+                        this.message = data.error_message;
                     }
                     else {
                         this.timings = data;
@@ -73,8 +73,8 @@ export default {
                     this.deleteResult = true;
 
                     if (!res.ok) {
-                        this.error_message = data.error_message;
-                        this.error_code = data.error_code;
+                        this.head_end = data.error_code;
+                        this.message = data.error_message;
                     }
                     else {
                         this.type = "info";

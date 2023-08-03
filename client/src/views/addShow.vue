@@ -6,7 +6,7 @@ export default {
   name: "addShow",
   data() {
     return {
-      auth_token: "",
+      user : this.$store.getters.fetch_user_details,
       shows: [],
       toastShow: false,
       header: "",
@@ -14,7 +14,7 @@ export default {
       message: "",
       type: "",
       name: "",
-      rating: 0,
+      rating: null,
       tags: [],
       languages: [],
       duration: "",
@@ -92,7 +92,7 @@ export default {
 
     const show = { name: this.name, rating: this.rating, tags: this.tags, languages: this.languages, duration: this.duration }
 
-    addShow(show)
+    addShow(this.user.auth_token,show)
       .then(async res =>  {
           const data = await res.json()
           this.toastShow = true;
@@ -121,12 +121,8 @@ export default {
   },
 
   onMounted(){
-    if(localStorage.auth_token){
-      this.auth_token = localStorage.auth_token;
-    }
-    else{
-        this.$router.push('/admin/login');
-    }
+    this.$store.commit('set_user_details_from_local');
+    this.user = this.$store.getters.fetch_user_details;
   },
 
   components: { ToastMsg },
