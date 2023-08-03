@@ -140,6 +140,11 @@ computed: {
               ><img src="@/assets/movie.svg" /> Shows</router-link
             >
           </li>
+          <li class="nav-item" v-if="userStatus & userType=='user'">
+            <router-link to="/user/bookings" class="nav-link"
+              ><img src="@/assets/movie.svg" /> Bookings</router-link
+            >
+          </li>
 
           <li class="nav-item" v-if="userStatus & userType=='admin'">
             <router-link to="/admin/venues" class="nav-link"

@@ -9,3 +9,8 @@ celerybeat-schedule
 
 TicketShow
 extra files
+
+.vscode/
+.vscode
+
+dist
