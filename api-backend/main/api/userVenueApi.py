@@ -11,6 +11,8 @@ venue_output_fields = {
     "name" : fields.String,
     "location" : fields.String,
     "capacity" : fields.Integer,
+    "city": fields.String,
+    "description": fields.String,
 }
 
 
@@ -41,4 +43,16 @@ class GetVenueByNameApi(Resource):
             return venues
         else:
             raise NotFoundError(error_message='No Venue found for this name',status_code=404,error_code="VN010")
+        
+class UserVenueAPI(Resource):
+
+    # get Venue by Name
+    @marshal_with(venue_output_fields)
+    def get(self,id):
+        venue = db.session.query(Venue).filter(Venue.id == id).first()
+
+        if venue:
+            return venue
+        else:
+            raise NotFoundError(error_message='Venue not found',status_code=404,error_code="VN001")
         

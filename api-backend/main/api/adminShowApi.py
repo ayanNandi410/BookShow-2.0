@@ -234,7 +234,7 @@ class ListShowByVenueApi(Resource):
 
     @marshal_with(userShow_output_fields)
     @auth_required('token')
-    @roles_accepted('admin')
+    @roles_accepted('admin','user')
     def get(self,vid):
         venue = db.session.query(Venue).filter(Venue.id == vid).first()
         shows = venue.shows
