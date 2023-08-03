@@ -31,7 +31,7 @@ const props = defineProps({
             <p class="card-text">
               <span class="badge rounded-pill bg-secondary" style="padding: 8px 10px;">{{ props.location }}</span>&emsp13;
             </p>   
-            <a href="#" class="btn btn-primary" onclick="getShows();" @click="$emit('displayShows',this.name,this.id)"
+            <a href="#" class="btn btn-primary" @click="$emit('displayShows',this.name,this.id)"
             data-bs-toggle="offcanvas" data-bs-target="#offcanvasShows" aria-controls="offcanvasShows">Shows</a>&emsp14;
           </div>
           <div class="card-footer text-muted">

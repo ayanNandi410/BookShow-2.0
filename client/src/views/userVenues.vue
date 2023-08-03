@@ -12,6 +12,10 @@ export default {
     };
   },
   methods: {
+    saveVenueCh(id){
+            this.$store.commit('set_choosen_venue', { id: id });
+    },
+
     load_all_venues(city){
       fetchVenues(this.user.auth_token,city, 'user')
       .then(async res =>  {
@@ -71,7 +75,8 @@ components: { VenueCard },
         v-bind:id=venue.id.toString()
         v-bind:name=venue.name 
         v-bind:capacity=venue.capacity 
-        v-bind:location=venue.location />
+        v-bind:location=venue.location
+        @saveVenueChoice="saveVenueCh(venue.id.toString())" />
     </div>
 </div>
 </template>

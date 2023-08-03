@@ -114,7 +114,7 @@ export default {
     this.showsLoading = true;
     var canvasBody = document.getElementById("fetchShowsError");
 
-    fetchShowsByVenue(this.venueChoice.id)
+    fetchShowsByVenue(this.user.auth_token,this.venueChoice.id)
       .then(async res =>  {
           const data = await res.json()
           console.log(data)

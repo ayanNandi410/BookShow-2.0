@@ -1,6 +1,6 @@
 <script>
 import ToastMsg from '../components/toastMsg.vue'
-import { register_user } from '../api';
+import { register_user, user_addRole } from '../api';
 import { onMounted } from 'vue';
 
 export default {
@@ -28,6 +28,31 @@ export default {
 
     closeToast() {
       this.toastShow = false;
+    },
+
+    addUserRole(){
+      user_addRole(this.email)
+          .then(async res => {
+            const data = await res.data
+
+            if (!res.ok) {
+              this.type = "error"
+              this.message = data;
+              this.header = "Validation Error";
+            }
+            else {
+              this.type = "info";
+              this.header = "User Registration"
+              this.message = "Proceed to login...";
+            }
+
+          })
+          .catch(e => {
+            this.type = "error"
+            this.message = e.message;
+            this.header = "Fetch Error"
+          }
+          );
     },
 
     submitForm() {
@@ -72,6 +97,7 @@ export default {
               this.type = "info";
               this.header = "User Registration"
               this.message = "Registered successfully...";
+              this.addUserRole();
             }
 
           })

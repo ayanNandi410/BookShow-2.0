@@ -74,6 +74,13 @@ const router = createRouter({
       component: () => import ("../views/userSearchVenues.vue"),
     },
     {
+      path: "/user/venue/home",
+      name: "userVenueHome",
+      beforeEnter : guardMyroute,
+      component: () => import ("../views/userVenueHome.vue"),
+      props: true,
+    },
+    {
       path: "/user/profile",
       name: "userProfile",
       beforeEnter : guardMyroute,

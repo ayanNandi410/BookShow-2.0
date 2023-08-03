@@ -31,18 +31,10 @@ const props = defineProps({
           <span
             class="badge rounded-pill bg-secondary"
             style="padding: 8px 10px"
-            >{{ props.location }}, {{ props.city }}</span
+            >{{ props.location }}<span v-if="props.city">, {{ props.city }}</span></span
           >
         </p>
-        <form method="post" action="/user/venueHome">
-          <input
-            type="number"
-            name="vid"
-            :value="props.id"
-            style="display: none"
-          />
-          <button type="submit" class="btn btn-primary">Explore</button>
-        </form>
+        <router-link :to="{ name: 'userVenueHome' }" @click="$emit('saveVenueChoice')" class="btn btn-primary">Explore</router-link>
       </div>
     </div>
   </div>

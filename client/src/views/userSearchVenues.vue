@@ -1,6 +1,6 @@
 <script>
 import UserVenueCard from '../components/UserVenueCard.vue'
-import { fetchCities, fetchVenues, fetchVenuesByName } from '../api';
+import { fetchVenues, fetchVenuesByName } from '../api';
 
 export default {
     name: "userSearchVenues",
@@ -16,6 +16,10 @@ export default {
         };
     },
     methods: {
+        saveVenueCh(id){
+            this.$store.commit('set_choosen_venue', { id: id });
+        },
+
         load_venues_by_name() {
             this.venues = [];
             this.loading = true;
@@ -65,7 +69,6 @@ export default {
 
                 })
                 .catch(e => {
-                    context.commit('set_error_message', { error_message: e });
                     console.log("Fetch Error: " + e)
                 }
                 );
@@ -73,9 +76,6 @@ export default {
 
     },
     computed: {
-        loading() {
-            return this.loading;
-        },
     },
 
     components: { UserVenueCard },
@@ -128,7 +128,7 @@ export default {
             v-bind:capacity=venue.capacity 
             v-bind:location=venue.location
             v-bind:city=venue.city
-            @displayShows="displayShows" />
+            @saveVenueChoice="saveVenueCh(venue.id.toString())" />
         </div>
     </div>
 </template>

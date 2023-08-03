@@ -22,6 +22,14 @@ export function register_user(user_details){
     return fetch(`${BASE_URL}register`, requestOptions)
 }
 
+export function user_addRole(email){
+  const requestOptions = {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    };
+  return fetch(`${BASE_URL}addRole/user/${email}`, requestOptions)
+}
+
 export function logout_user(){
   const requestOptions = {
       method: "POST",
@@ -50,6 +58,15 @@ export function fetchVenues(token, city, user_type) {
   else{
     return fetch(`${API_URL}venuesforUser/byCity/${city}`, requestOptions)
   }
+  
+}
+
+export function fetchVenue(token, id) {
+  const requestOptions = {
+    method: "GET",
+    headers: { "Content-Type": "application/json", "Authentication-Token": token },
+  };
+    return fetch(`${API_URL}user/venue/${id}`, requestOptions)
   
 }
 

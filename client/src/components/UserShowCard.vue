@@ -1,5 +1,6 @@
 <script setup>
 const props = defineProps({
+  id: String,
   name: String,
   rating: Number,
   duration: String,
@@ -54,9 +55,6 @@ const props = defineProps({
       <div class="card-footer text-muted">
         <button
           type="button"
-          data-columns="1"
-          data-sname="{{ show['name'] }}"
-          onclick="getReviews();"
           class="btn btn-sm btn-warning"
           data-bs-toggle="modal"
           data-bs-target="#reviewsModal"
@@ -68,11 +66,8 @@ const props = defineProps({
           type="button"
           class="btn btn-sm btn-success"
           data-bs-toggle="offcanvas"
-          onclick="setShow();"
           data-bs-target="#chVenueCanvas"
           aria-controls="chVenueCanvas"
-          data-columns="1"
-          data-sname="{{ show['name'] }}"
         >
           Venues
         </button>

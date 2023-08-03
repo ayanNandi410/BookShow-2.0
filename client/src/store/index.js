@@ -13,6 +13,7 @@ const state = {
   error_message: "",
   active_user: false,
   user_type: "",
+  venueId: null,
 }
 
 const actions = {
@@ -65,6 +66,11 @@ const mutations = {
   toggle_user(state){
     state.active_user = !state.active_user
     console.log(" active_user toggled")
+  },
+
+  set_choosen_venue(state, payload){
+    state.venueId = payload.id; 
+    console.log(" venue id saved")
   }
 
 }
