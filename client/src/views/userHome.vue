@@ -44,11 +44,10 @@ export default {
     this.load_all_cities();
   },
 
-  onMounted(){
-    if(localStorage.auth_token){
-      this.auth_token = localStorage.auth_token;
-    }
-  }
+  onMounted() {
+    this.$store.commit('set_user_details_from_local');
+    this.user = this.$store.getters.fetch_user_details;
+  },
 
 };
 </script>
@@ -67,7 +66,8 @@ export default {
             <div class="card" style="width: fit-content;">
               <img src="@/assets/city.svg" class="card-img-top mt-3" alt="" height="50" width="50" />
                 <div class="card-body">
-                  <a href="#" class="btn btn-sm btn-info" data-bs-dismiss="modal" data-bs-target="#cityModal" style="margin: auto 1%;" @click="routeVenues(city)">{{ city }}</a>
+                  <a href="#" class="btn btn-sm btn-info" data-bs-dismiss="modal" 
+                  data-bs-target="#cityModal" style="margin: auto 1%;" @click="routeVenues(city)">{{ city }}</a>
                 </div>
               </div>
             </div>

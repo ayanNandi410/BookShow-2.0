@@ -131,7 +131,7 @@ computed: {
           </li>
 
           <li class="nav-item" v-if="userStatus & userType=='user'">
-            <router-link to="/user/venues" class="nav-link"
+            <router-link to="/user/searchForVenues" class="nav-link"
               ><img src="@/assets/movie.svg" /> Venues</router-link
             >
           </li>

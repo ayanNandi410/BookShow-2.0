@@ -5,7 +5,7 @@ from .api.test import TestAPI
 from .api.cityApi import GetAllCitiesAPI
 from .api.adminVenueApi import AdminVenueListByCityAPI, AdminVenueAPI
 from .api.adminShowApi import PopularShowsApi, ShowAPI, ListShowByVenueApi
-from .api.userVenueApi import UserVenueListByCityAPI
+from .api.userVenueApi import UserVenueListByCityAPI, GetVenueByNameApi
 from .api.allocationApi import AllocationBetweenDatesAPI, AllocationAPI
     
 def getConfiguredApi(app):
@@ -15,6 +15,7 @@ def getConfiguredApi(app):
     apiV.add_resource(RegisterAPI,"/api/register",endpoint="/register")
     apiV.add_resource(TestAPI,"/api/test",endpoint="/test")
     apiV.add_resource(GetAllCitiesAPI,"/api/city/all",endpoint="/city/all")
+    apiV.add_resource(GetVenueByNameApi,"/api/venueByName/<string:name>",endpoint="/venueByName")
     #apiV.add_resource(VenueListByCityAPI,"/api/venues/byCity/<string:city>",endpoint="/venues/byCity")
 
     # for Admin

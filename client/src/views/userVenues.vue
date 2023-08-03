@@ -6,13 +6,14 @@ export default {
   name: "userVenues",
   data() {
     return {
+      user: this.$store.getters.fetch_user_details,
       venues: [],
       city: this.$route.params.city,
     };
   },
   methods: {
     load_all_venues(city){
-      fetchVenues(city, 'user')
+      fetchVenues(this.user.auth_token,city, 'user')
       .then(async res =>  {
           const data = await res.json()
           console.log(data)
@@ -38,7 +39,12 @@ components: { VenueCard },
 
   beforeMount() {
     this.load_all_venues(this.city);
-  }
+  },
+
+  onMounted() {
+    this.$store.commit('set_user_details_from_local');
+    this.user = this.$store.getters.fetch_user_details;
+  },
 
 };
 </script>
@@ -50,7 +56,11 @@ components: { VenueCard },
     <div class="row">
       <div class="col-12 col-sm-4">
           <h2>Venues in <span class="badge bg-success">{{ city }}</span></h2>
-      </div><hr/>  
+      </div>
+      <div class="col-12 col-sm-2 offset-sm-6">
+        <button class="btn btn-success" @click="$router.go(-1)">Go Back</button>
+      </div>
+      <hr/>  
     </div>
     <br/><br/>
 

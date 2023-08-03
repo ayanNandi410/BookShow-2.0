@@ -4,6 +4,7 @@ const props = defineProps({
   name: String,
   capacity: Number,
   location: String,
+  city: String,
 });
 </script>
 
@@ -30,7 +31,7 @@ const props = defineProps({
           <span
             class="badge rounded-pill bg-secondary"
             style="padding: 8px 10px"
-            >{{ props.location }}</span
+            >{{ props.location }}, {{ props.city }}</span
           >
         </p>
         <form method="post" action="/user/venueHome">

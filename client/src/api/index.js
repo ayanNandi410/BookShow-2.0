@@ -53,6 +53,15 @@ export function fetchVenues(token, city, user_type) {
   
 }
 
+export function fetchVenuesByName(token, name) {
+  const requestOptions = {
+    method: "GET",
+    headers: { "Content-Type": "application/json", "Authentication-Token": token },
+  };
+    return fetch(`${API_URL}venueByName/${name}`, requestOptions)
+  
+}
+
 export function deleteVenue(token,id) {
   const requestOptions = {
     method: "DELETE",

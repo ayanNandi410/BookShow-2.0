@@ -11,17 +11,8 @@ venue_output_fields = {
     "name" : fields.String,
     "location" : fields.String,
     "capacity" : fields.Integer,
-    "description" : fields.String,
 }
 
-# for POST and PUT request
-create_venue_parser = reqparse.RequestParser()
-create_venue_parser.add_argument('id',type=int)
-create_venue_parser.add_argument('name')
-create_venue_parser.add_argument('location')
-create_venue_parser.add_argument('city')
-create_venue_parser.add_argument('capacity',type=int, help='Capacity cannot be converted')
-create_venue_parser.add_argument('description')
 
 # Get Venue List for a city
 class UserVenueListByCityAPI(Resource):
@@ -37,3 +28,17 @@ class UserVenueListByCityAPI(Resource):
         
     def post(self):
         raise BusinessValidationError(status_code=405,error_code="VN050",error_message="Method not allowed")
+    
+
+# Get Venue List by Venue Name
+class GetVenueByNameApi(Resource):
+
+    @marshal_with(venue_output_fields)
+    def get(self,name):
+        venues = db.session.query(Venue).filter(Venue.name.ilike(f'%{name}%')).all()
+
+        if venues:
+            return venues
+        else:
+            raise NotFoundError(error_message='No Venue found for this name',status_code=404,error_code="VN010")
+        
