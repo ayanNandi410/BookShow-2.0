@@ -13,6 +13,7 @@ export default {
             showsLoading: false,
             venueName: "",
             venueChoice: "",
+            initialize: false,
         };
     },
     methods: {
@@ -23,6 +24,7 @@ export default {
         load_venues_by_name() {
             this.venues = [];
             this.loading = true;
+            this.initialize = true;
 
             fetchVenuesByName(this.user.auth_token,this.venueName)
                 .then(async res => {
@@ -94,7 +96,7 @@ export default {
 
 
 <template>
-    <div class="body container" style="min-height: 100%;">
+    <div class="body container vh-100">
 
     <div class="row">
         <div class="col-12 col-sm-3">
@@ -119,7 +121,7 @@ export default {
         </div>
 
         <h2 class="alert alert-primary text-center" style="margin: 8% 10% 20%;" 
-        v-if="venues.length == 0">Did not find any venue. Try again..</h2>
+        v-if="venues.length == 0 & initialize">Did not find any venue. Try again..</h2>
 
         <div class="row row-cols-md-3 row-cols-sm-1 g-3" v-else>
             <UserVenueCard v-for="venue in venues" 

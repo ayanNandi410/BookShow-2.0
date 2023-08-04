@@ -2,7 +2,10 @@
 import { onUpdated } from "vue";
 import { RouterLink, RouterView, onBeforeRouteUpdate } from "vue-router";
 import { mapState } from 'vuex'
-import { logout_user } from '../api'
+import { logout_user, downloadVenueCSV } from '../api'
+import axios from 'axios';
+
+const API_URL = 'http://127.0.0.1:5000/api/'
 
 export default {
   name: "navbar",
@@ -13,6 +16,7 @@ export default {
       head_end: "",
       message: "",
       type: "",
+      notifications: [],
     };
   },
   methods: {
@@ -50,6 +54,25 @@ export default {
     });   
     },
 
+    downloadCSV(name){
+      axios({
+        url: `${API_URL}venue/downloadCSV/${name}`, // Download File URL Goes Here
+        method: 'GET',
+        responseType: 'blob',
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': ' GET, PUT, POST, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token',
+            'Access-Control-Allow-Credentials': 'false',
+        },
+    }).then((res) => {
+        var FILE = window.URL.createObjectURL(new Blob([res.data]));
+        var docUrl = document.getElementById(name);
+        docUrl.href = FILE;
+        docUrl.setAttribute('download', name+'_Details.csv');
+    });
+    }
+
   },
 computed: {
   userStatus(){
@@ -57,6 +80,10 @@ computed: {
     },
   userType(){
     return this.$store.state.user_type
+  },
+  setNotifications(){
+    this.notifications = this.$store.state.notifications;
+    return this.notifications;
   }
   },
 
@@ -104,6 +131,23 @@ computed: {
       </div>
       <div class="offcanvas-body">
         <ul class="navbar-nav justify-content-end flex-grow-1 pe-4">
+
+          <li class="nav-item dropdown me-4" v-if="userStatus & userType=='admin'">
+            <button class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+              <img src="@/assets/bell.svg"/>
+              <span class="position-absolute top-25 start-100 translate-middle badge rounded-pill bg-primary">{{ notifications.length }}</span>
+            </button>
+            <ul class="dropdown-menu p-3 text-body-secondary" style="max-width: 40%;">
+              <li><h6 class="dropdown-header">Notifications</h6></li>
+              <!-- <li><a class="dropdown-item" href="#">Action</a></li> -->
+              <li v-for="item in setNotifications">
+                <div>CSV for Venue: {{ item.message }} ready.
+                  <a class="btn btn-sm btn-primary" :id="item.message" @click="downloadCSV(item.message)">Download</a>
+                </div>
+              </li>
+            </ul>
+          </li>
+
           <li class="nav-item" v-if="!userStatus">
             <router-link to="/" class="nav-link"
               ><img src="@/assets/home.svg" /> Home</router-link

@@ -132,17 +132,17 @@ def addData(db):
         db.session.add(allocDetails10)
         db.session.add(allocDetails11)
 
-        bookT1 = BookTicket(user_email='test@gmail.com',allocSeats=3,totPrice=345.50,timestamp=datetime.now())
+        bookT1 = BookTicket(user_email='a@gmail.com',allocSeats=3,totPrice=345.50,timestamp=datetime.now())
         bookT1.allocShow = allocDetails1
         db.session.add(bookT1)
-        bookT1 = BookTicket(user_email='test@gmail.com',allocSeats=2,totPrice=1200.50,timestamp=datetime.now())
+        bookT1 = BookTicket(user_email='a@gmail.com',allocSeats=2,totPrice=1200.50,timestamp=datetime.now())
         bookT1.allocShow = allocDetails10
         db.session.add(bookT1)
-        bookT1 = BookTicket(user_email='test@gmail.com',allocSeats=7,totPrice=800.50,timestamp=datetime.now())
+        bookT1 = BookTicket(user_email='a@gmail.com',allocSeats=7,totPrice=800.50,timestamp=datetime.now())
         bookT1.allocShow = allocDetails9
         db.session.add(bookT1)
 
-        review1 = MovieReview(show_id=1,user_email="test@gmail.com",gRating=1,comment="Very good Movie. Loved it!",timestamp=datetime.now())
+        review1 = MovieReview(show_id=1,user_email="a@gmail.com",gRating=1,comment="Very good Movie. Loved it!",timestamp=datetime.now())
         db.session.add(review1)
         review1 = MovieReview(show_id=1,user_email="test2@gmail.com",gRating=6,comment="Needs Improvement",timestamp=datetime.now())
         db.session.add(review1)

@@ -29,7 +29,7 @@ show_output_fields = {
 }
 
 alloc_output_fields = {
-    "timeslot" : fields.String,
+    "timeslot" : fields.DateTime(dt_format='rfc822'),
     "price" : fields.String
 }
 
@@ -43,11 +43,11 @@ booking_output_fields = {
 }
 
 create_booking_parser = reqparse.RequestParser()
-create_booking_parser.add_argument('venue_name')
-create_booking_parser.add_argument('show_name')
+create_booking_parser.add_argument('vid')
+create_booking_parser.add_argument('sid')
 create_booking_parser.add_argument('date')
 create_booking_parser.add_argument('time')
-create_booking_parser.add_argument('user_email')
+create_booking_parser.add_argument('email')
 create_booking_parser.add_argument('allocSeats',type=int, help="Seats must be an integer")
 create_booking_parser.add_argument('totPrice', type=float, help="Not a valid number or price")
 
@@ -71,18 +71,18 @@ class BookTicketAPI(Resource):
     @roles_accepted('user')
     def post(self):
         bk_args = create_booking_parser.parse_args()
-        venueName = bk_args.get('venue_name',None)
-        showName = bk_args.get('show_name',None)
+        vid = bk_args.get('vid',None)
+        sid = bk_args.get('sid',None)
         fDate = bk_args.get('date',None)
         fTime = bk_args.get('time',None)
-        email = bk_args.get('user_email',None)
+        email = bk_args.get('email',None)
         allcSeats = bk_args.get('allocSeats',None)
         ticketPrice = bk_args.get('totPrice',None)
 
-        if venueName is None or venueName == '':
+        if vid is None or vid == '':
             raise BusinessValidationError(status_code=400,error_code="AL001",error_message="Venue Name is required")
     
-        if showName is None or showName == '':
+        if sid is None or sid == '':
             raise BusinessValidationError(status_code=400,error_code="AL002",error_message="Show Name is required")
 
         if email is None or email == '':
@@ -108,13 +108,12 @@ class BookTicketAPI(Resource):
             raise BusinessValidationError(status_code=400,error_code="AL007",error_message="Invalid seat count")
 
         
-        show = db.session.query(Show).filter(Show.name == showName).first()
+        show = db.session.query(Show).get(sid)
 
         if not show:
             raise BusinessValidationError(status_code=400,error_code="AL008",error_message="Show does not exist")
 
-        venue = db.session.query(Venue).filter(Venue.name == venueName).first()
-
+        venue = db.session.query(Venue).get(vid)
         if not venue:
             raise BusinessValidationError(status_code=400,error_code="AL009",error_message="Venue does not exist")
 

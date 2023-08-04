@@ -99,11 +99,17 @@ const router = createRouter({
       beforeEnter : guardMyroute,
       component: () => import ("../views/userBookings.vue"),
     },
-        {
+    {
       path: "/user/buyTicket",
       name: "userTimeslots",
       beforeEnter : guardMyroute,
       component: () => import ("../views/bookTimeslot.vue"),
+    },
+    {
+      path: "/user/confirmTicket",
+      name: "userConfirmTicket",
+      beforeEnter : guardMyroute,
+      component: () => import ("../views/confirmTicket.vue"),
     },
 
     

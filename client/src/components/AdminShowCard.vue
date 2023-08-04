@@ -14,24 +14,26 @@ const props = defineProps({
 <div class="col">
           <div class="card p-3" style="width: 18rem; margin-right: 20px;">
             <div class="card-img-caption">
-                <div class="d-flex justify-content-end">
+                <div class="d-flex justify-content-end mb-4">
                 <img
                     src="@/assets/star-full.svg"
-                    class="filter-orange"
+                    class="filter-orange" width="20"
                     v-for="(n, index) in props.rating"
                 />
                 <img
                     src="@/assets/star-empty.svg"
-                    class="filter-orange"
+                    class="filter-orange" width="20"
                     v-for="(n, index) in 5 - props.rating"
                 />
                 </div>
-                <img
-                src="@/assets/movie.png"
-                class="card-img-top blurImage"
-                height="270"
-                alt="..."
-                />
+                <div class="p-4">
+                  <img
+                    src="@/assets/movie.png"
+                    class="card-img-top blurImage"
+                    height="200"
+                    alt="Movie"
+                  />
+                </div>
             </div>
             <div class="card-body">
               <h5 class="card-title">{{ props.name }}</h5>

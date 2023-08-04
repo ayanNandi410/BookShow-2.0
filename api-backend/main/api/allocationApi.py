@@ -17,7 +17,7 @@ allocation_output_fields = {
     "time" : fields.String,
     "avSeats" : fields.Integer,
     "totSeats" : fields.Integer,
-    "price" : fields.Float,
+    "price" : fields.Fixed(decimals=2),
     "show" : fields.String,
     "venue" : fields.String
 }
@@ -30,13 +30,13 @@ userallocation_output_fields = {
     "time" : fields.String,
     "avSeats" : fields.Integer,
     "totSeats" : fields.Integer,
-    "price" : fields.Float
+    "price" : fields.Fixed(decimals=2)
 }
 
 userSevenD_entry = {
     "time": fields.String,
     "avSeats": fields.Integer,
-    "price": fields.Float
+    "price": fields.Fixed(decimals=2)
 }
 
 userSevenD_output_fields = {
@@ -268,24 +268,23 @@ class AllocationForSevenDaysAPI(Resource):
         show = db.session.query(Show).filter(Show.id == showId).first()
         venue =db.session.query(Venue).filter(Venue.id == vId).first()
 
-        timeslotList = db.session.query(Allocation.id,Allocation.venue_id,Allocation.timeslot,Allocation.avSeats,Allocation.totSeats,Allocation.price).filter(Allocation.venue == venue,Allocation.show == show,Allocation.timeslot.between(sDate,eDate)).order_by(Allocation.timeslot).limit(50).all()
+        timeslotList = db.session.query(Allocation.id,Allocation.venue_id,Allocation.timeslot,Allocation.avSeats,Allocation.totSeats,Allocation.price)\
+        .filter(Allocation.venue == venue,Allocation.show == show,Allocation.timeslot.between(sDate,eDate))\
+        .order_by(Allocation.timeslot).limit(50).all()
 
         if not timeslotList:
             raise NotFoundError(error_message='No timeslots found',status_code=404,error_code="AL011")
         else:
-            timeslots = []
-            for row in timeslotList:
-                slotDict = { "id": row.id, "venue_id": row.venue_id, "date" : row.timeslot.strftime("%Y-%m-%d"), "time" : row.timeslot.strftime("%H:%M:%S"), 
-                            "avSeats" : row.avSeats, "totSeats" : row.totSeats, "price" : row.price }
-                timeslots.append(slotDict)
             
             slots = [[],[],[],[],[],[],[]]
-            print(timeslots)
 
             for item in timeslotList:
                 index = ( item.timeslot - dt.today()).days
                 print(index)
-                slots[index].append({ 'date': item.timeslot.strftime("%Y-%m-%d"),'time': item.timeslot.strftime("%H:%M:%S"), 'avSeats': item.avSeats, 'price': item.price })
+                slots[index].append({ 'date': item.timeslot.strftime("%Y-%m-%d"),
+                                     'time': item.timeslot.strftime("%I:%M %p"), 
+                                     'avSeats': item.avSeats, 
+                                     'price': item.price })
 
             dateList = []
 

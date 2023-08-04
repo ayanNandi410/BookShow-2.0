@@ -7,6 +7,7 @@ from .api.adminVenueApi import AdminVenueListByCityAPI, AdminVenueAPI
 from .api.adminShowApi import PopularShowsApi, ShowAPI, ListShowByVenueApi
 from .api.userVenueApi import UserVenueListByCityAPI, GetVenueByNameApi, UserVenueAPI
 from .api.allocationApi import AllocationBetweenDatesAPI, AllocationAPI, AllocationForSevenDaysAPI
+from .api.exportAdminShow import ExportShowAPI, DownloadCSVAPI
 
 from .api.bookingApi import BookTicketAPI
     
@@ -38,6 +39,9 @@ def getConfiguredApi(app):
     apiV.add_resource(UserVenueAPI,"/api/user/venue/<string:id>","/api/venue",endpoint="/user/venue")
 
     apiV.add_resource(BookTicketAPI,"/api/booking","/api/booking/<string:email>",endpoint="/booking")
+
+    apiV.add_resource(ExportShowAPI,"/api/exportVenue/<vid>",endpoint="/exportVenue")
+    apiV.add_resource(DownloadCSVAPI,"/api/venue/downloadCSV/<name>",endpoint="/venue/downloadCSV")
 
 
     return apiV

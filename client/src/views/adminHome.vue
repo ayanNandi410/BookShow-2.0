@@ -88,10 +88,10 @@ export default {
     <p class="lead">You have reached a place where you can explore all venues available in your City
         and book your favourite show as well. You may use the links available at the top to begin your journey.</p>
     <hr class="my-4">
-    <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
+    <p></p>
     <p class="lead">
-      <button class="btn btn-primary btn-md" type="button" 
-        data-bs-toggle="modal" data-bs-target="#cityModal">See Venues</button> 
+      <!-- <button class="btn btn-primary btn-md" type="button" 
+        data-bs-toggle="modal" data-bs-target="#cityModal">See Venues</button>  -->
     </p>
   </div>
 </div>

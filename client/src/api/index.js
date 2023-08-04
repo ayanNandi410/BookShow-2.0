@@ -96,6 +96,37 @@ export function addVenue(token,venue) {
   return fetch(`${API_URL}venue`, requestOptions)
 }
 
+export function exportVenue(token, id) {
+  const requestOptions = {
+    method: "GET",
+    headers: { "Content-Type": "application/json", "Authentication-Token": token },
+  };
+    return fetch(`${API_URL}exportVenue/${id}`, requestOptions)
+  
+}
+
+export function downloadVenueCSV(name){
+      axios({
+        url: `${API_URL}venue/downloadCSV/${name}`, // Download File URL Goes Here
+        method: 'GET',
+        responseType: 'blob',
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': ' GET, PUT, POST, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token',
+            'Access-Control-Allow-Credentials': 'false',
+        },
+    }).then((res) => {
+        var FILE = window.URL.createObjectURL(new Blob([res.data]));
+        var docUrl = document.createElement('x');
+        docUrl.href = FILE;
+        docUrl.setAttribute('download', name+'_Details.csv');
+        document.body.appendChild(docUrl);
+        docUrl.click();
+    });
+}
+
+
 export function addShow(token,show) {
   const requestOptions = {
     method: "POST",

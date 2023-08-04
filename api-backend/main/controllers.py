@@ -2,6 +2,7 @@ from flask import render_template
 from flask_security import Security, SQLAlchemySessionUserDatastore, auth_required, roles_accepted, hash_password, current_user
 from main.db import db
 from main.models import User
+from .tasks.exportShowsCSV import ShowsCSV
 
 def setup_controllers(app):
     
@@ -35,6 +36,11 @@ def setup_controllers(app):
             return "Success"
         else:
             return "Failure"
+        
+    @app.route('/test/<vid>')
+    def test(vid):
+        job = ShowsCSV.delay(vid)
+        return "success"
         
 
 from flask_security.forms import RegisterForm, ConfirmRegisterForm

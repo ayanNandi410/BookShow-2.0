@@ -146,15 +146,15 @@ export default {
             <div href="#" class="list-group-item list-group-item-action" v-for="booking in bookings">
                 <div class="d-flex w-100 justify-content-between">
                   <h5 class="mb-1">Show : {{ booking.show[0].name }}</h5>
-                  <small class="text-muted">{{ booking.timestamp.substring(0, 19) }}</small>
+                  <small class="text-muted">{{ booking.timestamp.substring(0, 22) }}</small>
                 </div>
                 <div class="d-flex w-100 justify-content-between">
-                    <p class="mb-1">Venue : {{ booking.venue[0].name }}</p>
+                    <h5 class="mb-1">Venue : {{ booking.venue[0].name }}</h5>
                     <small>Total Price : <b>{{ booking.totPrice }}</b></small>
                 </div>
                 <div class="d-flex w-100 justify-content-between">
-                    <p class="mb-1">Show Timing : {{ booking.allocation.timeslot.substring(0,19) }}</p>
-                    <small>Seats checked out: <b>{{ booking.allocSeats }}</b></small>
+                    <p class="mb-1">Show Timing : {{ booking.allocation.timeslot.substring(0,22) }}</p>
+                    <small>Seats checked out: <b style="color:blue;">{{ booking.allocSeats }}</b></small>
                 </div>
                 <div class="text-center">
                     <button type="button" class="btn btn-warning" @click="setReview(booking)"

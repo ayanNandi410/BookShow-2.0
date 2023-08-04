@@ -15,6 +15,7 @@ const state = {
   user_type: "",
   venue: {},
   show: {},
+  notifications: [],
 }
 
 const actions = {
@@ -77,6 +78,10 @@ const mutations = {
     set_choosen_show(state, payload){
     state.show ={ id: payload.id, name: payload.name }; 
     console.log(" show saved")
+  },
+
+  set_notif(state, payload){
+    state.notifications.push({ message: payload.message });
   }
 
 }

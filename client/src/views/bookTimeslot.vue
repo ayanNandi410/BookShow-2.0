@@ -10,9 +10,20 @@ export default {
         showId: this.$store.state.show.id,
         venueId: this.$store.state.venue.id,
         timeslots: {},
+        bookEntry: {},
     };
   },
   methods: {
+
+    setModalBody(entry, dateIndex){
+      this.bookEntry = {
+        time: entry.time,
+        date: this.timeslots.days[dateIndex].substring(0,16),
+        seats_avl: entry.avSeats,
+        perPsnPrice: entry.price
+      }
+    },
+
     fetchAllTimeslots() {
       this.loading = true;
       console.log("inside fetch booking");
@@ -78,11 +89,15 @@ export default {
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body" id="priceModalBody">
-
+        <p>Time: {{ bookEntry.time }}<br/>
+        Date: {{ bookEntry.date }}</p>
+        <p>Price per seat: <span style="color: red;">&#8377; {{ bookEntry.perPsnPrice }}</span><br/>
+        Seats left: {{ bookEntry.seats_avl }}</p>
+        <p>Do you want to buy tickets??</p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <a href="#" id="bookBt" class="btn btn-primary">Book Tickets</a>
+        <router-link to="/user/confirmTicket" data-bs-dismiss="modal" class="btn btn-primary">Book Tickets</router-link>
       </div>
     </div>
   </div>
@@ -127,23 +142,21 @@ export default {
 
                 <p class="alert alert-sm alert-primary" style="width: 40%; margin: auto;" v-if="slot.length==0">No shows</p>
 
-              <div v-else v-for="entry in slot" class="">
+              <span v-else v-for="entry in slot" class="">
                     <button v-if="entry.avSeats == 0" class="btn btn-danger position-relative" disabled>{{ entry.time }}
                       <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
                       {{ entry.avSeats }}</span></button>&emsp14;
 
                     <!-- {% elif (timeslot[1] | int) < 15 %} -->
                     <button class="btn btn-warning position-relative" v-else-if="entry.avSeats < 15" 
-                    onclick=" setModalBody();" 
-                    data-bs-toggle="modal" data-bs-target="#priceModal">{{ entry.time }}
+                    @click="setModalBody(entry,index)" data-bs-toggle="modal" data-bs-target="#priceModal">{{ entry.time }}
                       <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">{{ entry.avSeats }}</span></button>&emsp14;
 
                     <button class="btn btn-success position-relative" v-else
-                        onclick=" setModalBody();"
-                         data-bs-toggle="modal" data-bs-target="#priceModal">{{ entry.time }}
+                        @click="setModalBody(entry,index)" data-bs-toggle="modal" data-bs-target="#priceModal">{{ entry.time }}
                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">{{ entry.avSeats }}</span></button>&emsp14;
                     
-              </div>
+              </span>
             </div>
           </div>
         </div>

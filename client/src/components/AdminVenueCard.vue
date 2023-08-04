@@ -13,18 +13,20 @@ const props = defineProps({
     <div class="col">
         <div class="card p-3" style="width: 18rem; margin-right: 20px;">
             <div class="card-img-caption">
-                <div class="d-flex justify-content-end">
+                <div class="d-flex justify-content-end mb-4">
                   <span class="card-text badge rounded-pill bg-primary flex-row-reverse"
                     >Capacity : {{ props.capacity }}</span
                   >
                 </div>
-                <img
+                <div class="p-4">
+                  <img
                   src="@/assets/hall.png"
                   class="card-img-top blurImage"
                   height="200"
                   width="30"
                   alt="..."
-                />
+                  />
+                </div>
             </div>
           <div class="card-body">
             <h5 class="card-title">{{ props.name }}</h5>
@@ -33,6 +35,7 @@ const props = defineProps({
             </p>   
             <a href="#" class="btn btn-primary" @click="$emit('displayShows',this.name,this.id)"
             data-bs-toggle="offcanvas" data-bs-target="#offcanvasShows" aria-controls="offcanvasShows">Shows</a>&emsp14;
+            <a href="#" class="btn btn-primary" @click="$emit('exportVeueDet',this.name,this.id)">Export</a>&emsp14;
           </div>
           <div class="card-footer text-muted">
             <p><img src="@/assets/calendar.svg"/> {{ props.timestamp.slice(0,22) }}</p>

@@ -1,7 +1,7 @@
 <script>
 import AdminVenueCard from '../components/AdminVenueCard.vue'
 import ToastMsg from '../components/toastMsg.vue'
-import { fetchCities, fetchVenues, deleteVenue, fetchShowsByVenue } from '../api';
+import { fetchCities, fetchVenues, deleteVenue, fetchShowsByVenue, exportVenue } from '../api';
 
 export default {
   name: "adminVenues",
@@ -148,6 +148,27 @@ export default {
       venueName: this.venueChoice.name
     }
     this.$router.push({ path: '/admin/timings/view', query: details })
+  },
+
+  exportVenue(name,id){
+    exportVenue(this.user.auth_token,id)
+      .then(async res =>  {
+          const data = await res.json()
+          console.log(data)
+
+
+          if(!res.ok){
+            this.error_message = data.error_message;
+          }
+          else{
+            this.$store.commit('set_notif', { message: name })
+          }
+          
+      })
+      .catch(e => {
+          console.log("Fetch Error: "+e)
+          }
+      ); 
   }
 
 },
@@ -288,6 +309,7 @@ components: { AdminVenueCard, ToastMsg },
         v-bind:location=venue.location 
         v-bind:timestamp="venue.timestamp"
         @deleteVenue="deleteVenueModal"
+        @exportVeueDet="exportVenue"
         @displayShows="displayShows"/>
     </div>
 </div>
