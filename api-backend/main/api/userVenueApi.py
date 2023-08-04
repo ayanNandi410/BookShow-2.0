@@ -4,6 +4,7 @@ from ..models import Venue, Allocation, Show
 from main.db import db
 from main.validation import NotFoundError, BusinessValidationError
 from sqlalchemy import desc, exc
+from flask_security import auth_required, roles_accepted
 
 # Output JSON format
 venue_output_fields = {

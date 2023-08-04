@@ -6,6 +6,7 @@ from ..models import BookTicket, Show, Venue, Allocation
 from main.db import db
 from main.validation import NotFoundError, BusinessValidationError
 from sqlalchemy import desc, exc
+from flask_security import auth_required, roles_accepted
 
 # Api for handling user booking
 
@@ -18,6 +19,7 @@ class MyTime(fields.Raw):
         return value.strftime('%H-%M-%S')
 
 venue_output_fields = {
+    "id" : fields.Integer,
     "name" : fields.String
 }
 
@@ -53,6 +55,8 @@ class BookTicketAPI(Resource):
 
     # get booking details for a given user
     @marshal_with(booking_output_fields)
+    @auth_required('token')
+    @roles_accepted('user')
     def get(self,email):
 
         bookings = db.session.query(BookTicket).filter(BookTicket.user_email == email).order_by(BookTicket.timestamp).limit(20).all()
@@ -63,6 +67,8 @@ class BookTicketAPI(Resource):
             return bookings, 200
 
     # create a new booking
+    @auth_required('token')
+    @roles_accepted('user')
     def post(self):
         bk_args = create_booking_parser.parse_args()
         venueName = bk_args.get('venue_name',None)

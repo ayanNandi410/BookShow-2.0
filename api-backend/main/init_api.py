@@ -6,7 +6,7 @@ from .api.cityApi import GetAllCitiesAPI
 from .api.adminVenueApi import AdminVenueListByCityAPI, AdminVenueAPI
 from .api.adminShowApi import PopularShowsApi, ShowAPI, ListShowByVenueApi
 from .api.userVenueApi import UserVenueListByCityAPI, GetVenueByNameApi, UserVenueAPI
-from .api.allocationApi import AllocationBetweenDatesAPI, AllocationAPI
+from .api.allocationApi import AllocationBetweenDatesAPI, AllocationAPI, AllocationForSevenDaysAPI
 
 from .api.bookingApi import BookTicketAPI
     
@@ -31,7 +31,7 @@ def getConfiguredApi(app):
     apiV.add_resource(ShowAPI,"/api/show/<string:id>","/api/show",endpoint="/show")
     apiV.add_resource(AllocationBetweenDatesAPI,"/api/timingWithRange",endpoint="/timingWithRange")
     apiV.add_resource(AllocationAPI,"/api/timing/<string:aid>",endpoint="/timing/<string:aid>")
-    
+    apiV.add_resource(AllocationForSevenDaysAPI,"/api/timing/sevenDays",endpoint="/sevenDays")
 
     # for User
     apiV.add_resource(UserVenueListByCityAPI,"/api/venuesforUser/byCity/<string:city>",endpoint="/venuesforUser/byCity")

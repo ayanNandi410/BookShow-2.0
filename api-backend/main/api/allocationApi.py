@@ -6,7 +6,7 @@ from flask import request
 from sqlalchemy import desc, exc
 from main.db import db
 from main.validation import NotFoundError, BusinessValidationError
-from datetime import datetime as dt
+from datetime import datetime as dt, timedelta
 
 # Api for working with show-venue allocations alongwith timing details
 
@@ -32,6 +32,18 @@ userallocation_output_fields = {
     "totSeats" : fields.Integer,
     "price" : fields.Float
 }
+
+userSevenD_entry = {
+    "time": fields.String,
+    "avSeats": fields.Integer,
+    "price": fields.Float
+}
+
+userSevenD_output_fields = {
+    "days" : fields.List(fields.DateTime),
+    "slots" : fields.List(fields.Nested(userSevenD_entry)),
+}
+
 
 # Parser details for post and put request
 create_allocation_parser = reqparse.RequestParser()
@@ -241,3 +253,47 @@ class AllocationBetweenDatesAPI(Resource):
                 slotlist.append(slotDict)
             print(slotDict)
             return slotlist, 200
+        
+
+class AllocationForSevenDaysAPI(Resource):
+
+    @marshal_with(userSevenD_output_fields)
+    def get(self):
+        sDate = dt.now()
+        eDate = dt.now() + timedelta(days=7)
+
+        showId = request.args.get('sid')
+        vId = request.args.get('vid')
+
+        show = db.session.query(Show).filter(Show.id == showId).first()
+        venue =db.session.query(Venue).filter(Venue.id == vId).first()
+
+        timeslotList = db.session.query(Allocation.id,Allocation.venue_id,Allocation.timeslot,Allocation.avSeats,Allocation.totSeats,Allocation.price).filter(Allocation.venue == venue,Allocation.show == show,Allocation.timeslot.between(sDate,eDate)).order_by(Allocation.timeslot).limit(50).all()
+
+        if not timeslotList:
+            raise NotFoundError(error_message='No timeslots found',status_code=404,error_code="AL011")
+        else:
+            timeslots = []
+            for row in timeslotList:
+                slotDict = { "id": row.id, "venue_id": row.venue_id, "date" : row.timeslot.strftime("%Y-%m-%d"), "time" : row.timeslot.strftime("%H:%M:%S"), 
+                            "avSeats" : row.avSeats, "totSeats" : row.totSeats, "price" : row.price }
+                timeslots.append(slotDict)
+            
+            slots = [[],[],[],[],[],[],[]]
+            print(timeslots)
+
+            for item in timeslotList:
+                index = ( item.timeslot - dt.today()).days
+                print(index)
+                slots[index].append({ 'date': item.timeslot.strftime("%Y-%m-%d"),'time': item.timeslot.strftime("%H:%M:%S"), 'avSeats': item.avSeats, 'price': item.price })
+
+            dateList = []
+
+            curdate = dt.today()
+            for i in range(7): 
+                dateList.append(curdate)
+                curdate += timedelta(days=1)
+
+            result = { 'days': dateList, 'slots': slots }
+
+            return result, 200

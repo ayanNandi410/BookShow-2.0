@@ -16,8 +16,8 @@ export default {
         };
     },
     methods: {
-        saveVenueCh(id){
-            this.$store.commit('set_choosen_venue', { id: id });
+        saveVenueCh(id,name){
+            this.$store.commit('set_choosen_venue', { id: id, name: name });
         },
 
         load_venues_by_name() {
@@ -128,7 +128,7 @@ export default {
             v-bind:capacity=venue.capacity 
             v-bind:location=venue.location
             v-bind:city=venue.city
-            @saveVenueChoice="saveVenueCh(venue.id.toString())" />
+            @saveVenueChoice="saveVenueCh(venue.id.toString(),venue.name)" />
         </div>
     </div>
 </template>

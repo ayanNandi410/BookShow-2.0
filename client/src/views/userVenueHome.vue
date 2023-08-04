@@ -8,13 +8,18 @@ export default {
         return {
             user: this.$store.getters.fetch_user_details,
             venue: {},
-            venueId: this.$store.state.venueId,
+            venueId: this.$store.state.venue.id,
             shows: [],
             loading: false,
         };
     },
 
     methods: {
+
+        saveShow(id,name){
+            this.$store.commit('set_choosen_show', { id: id, name: name });
+        },
+
         load_venue() {
             fetchVenue(this.user.auth_token, this.venueId)
                 .then(async res => {
@@ -115,7 +120,7 @@ export default {
                         ><br/>
                         <span class="badge bg-info text-white">{{ show.duration }}</span>&nbsp;
                         <span class="badge bg-warning text-dark mt-3">Rating: {{ show.rating }} / 10</span>
-                        <router-link to="/user/buyTicket" class="btn btn-primary mt-3">Buy Tickets</router-link>
+                        <router-link to="/user/buyTicket" @click="saveShow(show.id,show.name)" class="btn btn-primary mt-3">Buy Tickets</router-link>
                         </div>
                     </div>
                     </div>

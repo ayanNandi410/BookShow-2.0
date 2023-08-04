@@ -108,7 +108,7 @@ def addData(db):
         db.session.add(allocDetails11)
 
         allocDetails1 = Allocation(venue_id=1,show_id=2,timeslot=datetime.now()+timedelta(hours=72),totSeats=120,avSeats=100,price=234.50)
-        allocDetails2 = Allocation(venue_id=1,show_id=2,timeslot=datetime.now()-timedelta(hours=70),totSeats=150,avSeats=80,price=430.50)
+        allocDetails2 = Allocation(venue_id=1,show_id=2,timeslot=datetime.now()+timedelta(hours=70),totSeats=150,avSeats=80,price=430.50)
         allocDetails3 = Allocation(venue_id=3,show_id=3,timeslot=datetime.now()+timedelta(hours=68),totSeats=210,avSeats=20,price=330.50)
         allocDetails4 = Allocation(venue_id=3,show_id=3,timeslot=datetime.now()-timedelta(hours=62),totSeats=210,avSeats=20,price=330.50)
         allocDetails5 = Allocation(venue_id=1,show_id=4,timeslot=datetime.now()+timedelta(hours=56),totSeats=210,avSeats=20,price=330.50)

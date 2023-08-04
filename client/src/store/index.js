@@ -13,7 +13,8 @@ const state = {
   error_message: "",
   active_user: false,
   user_type: "",
-  venueId: null,
+  venue: {},
+  show: {},
 }
 
 const actions = {
@@ -69,8 +70,13 @@ const mutations = {
   },
 
   set_choosen_venue(state, payload){
-    state.venueId = payload.id; 
-    console.log(" venue id saved")
+    state.venue ={ id: payload.id, name: payload.name }; 
+    console.log(" venue saved")
+  },
+
+    set_choosen_show(state, payload){
+    state.show ={ id: payload.id, name: payload.name }; 
+    console.log(" show saved")
   }
 
 }

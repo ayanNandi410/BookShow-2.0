@@ -149,6 +149,35 @@ export function deleteTiming(id) {
   return fetch(`${API_URL}timing/${id}`, requestOptions)
 }
 
+export function fetchTimeslots(details) {
+  const requestOptions = {
+    method: "GET",
+    headers: { "Content-Type": "application/json" }
+  };
+    return fetch(`${API_URL}timing/sevenDays?sid=${details.sid}&vid=${details.vid}`, requestOptions)
+  
+}
+
+export function fetchBooking(token,email) {
+  const requestOptions = {
+    method: "GET",
+    headers: { "Content-Type": "application/json", "Authentication-Token": token },
+  };
+    return fetch(`${API_URL}booking/${email}`, requestOptions)
+  
+}
+
+export function registerBooking(token, details) {
+  const requestOptions = {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "Authentication-Token": token },
+    body: JSON.stringify(details)
+  };
+    return fetch(`${API_URL}booking`, requestOptions)
+  
+}
+// extra
+
 export function fetchSurvey(surveyId) {
   return axios.get(`${API_URL}/surveys/${surveyId}/`)
 }

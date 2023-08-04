@@ -1,21 +1,70 @@
 <script>
+import { fetchTimeslots } from '../api'
 
 export default {
-  name: "Ping",
+  name: "userTimeslots",
   data() {
     return {
-        show: {},
-        venue: {},
-
+        showName: this.$store.state.show.name,
+        venueName: this.$store.state.venue.name,
+        showId: this.$store.state.show.id,
+        venueId: this.$store.state.venue.id,
+        timeslots: {},
     };
   },
   methods: {
+    fetchAllTimeslots() {
+      this.loading = true;
+      console.log("inside fetch booking");
 
+      fetchTimeslots({ sid: this.showId, vid: this.venueId })
+        .then(async res => {
+          const data = await res.json()
+          this.header = "Get Timeslots"
+
+          if (!res.ok) {
+            this.message = data.error_message;
+            this.head_end = data.error_code;
+            this.loading = false;
+          }
+          else {
+            this.timeslots = data;
+            console.log(this.timeslots);
+            console.log(this.timeslots.days);
+            this.loading = false;
+          }
+
+        })
+        .catch(e => {
+          this.message = e.data;
+          console.log("Fetch Error: " + e)
+        });
+    },
   },
-  created() {
+  computed: {
+    countTimeslots(){
+      let count = 0;
 
+      if(this.timeslots=={})
+      {
+        return 0;
+      }
+
+      for(x in 7)
+      {
+        if(this.timeslots.slots[x]==[])
+        {
+          count++;
+        }
+      }
+      return count;
+    }
   },
   components: { },
+
+  beforeMount(){
+    this.fetchAllTimeslots();
+  }
 };
 </script>
 
@@ -45,61 +94,60 @@ export default {
   </div>
     <div class="row text-center">
       <div class="col-12 col-sm-6">
-        <h5 class="alert alert-success">Show: {{ show }}</h5>
+        <h5 class="alert alert-success">Show: {{ showName }}</h5>
       </div>
       <div class="col-12 col-sm-6">
-        <h5 class="alert alert-success">Venue: {{ venue }}</h5>
+        <h5 class="alert alert-success">Venue: {{ venueName }}</h5>
       </div>
     </div><hr/>
-    {% if emptySlotList is defined %}
-      <br/><br/><h4 class="alert alert-success text-center">No slots Available in this week.<br/> Will be added soon..</h4>
-    {% else %}
+
+      <br/><br/><h4 class="alert alert-success text-center" v-if="countTimeslots">No slots Available in this week.<br/> Will be added soon..</h4>
+
     <div class="card text-center" style="width: fit-content; margin: auto;">
         <div class="card-header" style="background-color: #1f87c8;">
           <p class="card-text text-white">Choose Day from below</p>
           <ul class="nav nav-tabs card-header-tabs" id="timeNavbar">
-            {% for day in dayList %}
-            <li class="nav-item">
-              {% if loop.index == 1 %}
-              <a class="nav-link text-white" data-bs-toggle="collapse" href="#{{ day | string }}" 
-              role="button" aria-expanded="false" aria-controls="{{ day | string }}">{{day}}(Today)</a>
-              {% else %}
-              <a class="nav-link text-white" data-bs-toggle="collapse" href="#{{ day | string }}" 
-              role="button" aria-expanded="false" aria-controls="{{ day | string }}">{{day}}</a>
-              {% endif %}
+            <li class="nav-item" v-for="(day,index) in timeslots.days">
+
+              <a class="nav-link text-white" data-bs-toggle="collapse" :href="'#'+index.toString()" v-if="index==0"
+              role="button" aria-expanded="false" :aria-controls="index">{{ day.substring(4,12) }}(Today)</a>
+
+              <a class="nav-link text-white" data-bs-toggle="collapse" :href="'#' + index.toString()" v-else
+              role="button" aria-expanded="false" :aria-controls="index">{{ day.substring(4,12) }}</a>
+
             </li>
-            {% endfor %}
           </ul>
         </div>
         <div id="timeslots">
-        {% for date, slots in slotsDict|dictsort %}
-        <div class="collapse" data-bs-parent="#timeslots" id="{{ dayList[loop.index-1] | string }}">
+        <!-- {% for date, slots in slotsDict|dictsort %} -->
+        <div class="collapse" data-bs-parent="#timeslots" v-for="(slot,index) in timeslots.slots" :id="index" >
           <div class="card card-body">
-            <h5 class="card-title" style="margin-bottom: 10px;">{{ date }} ({{ dayList[loop.index-1] | string }})</h5>
+            <h5 class="card-title" style="margin-bottom: 10px;">{{ timeslots.days[index].substring(4,12) }}</h5>
             <div class="card-text">
-              {% if (slots | length) == 0 %}
-                <p class="alert alert-sm alert-primary" style="width: 40%; margin: auto;">No shows</p>
-              {% else %}
-              {% for timeslot in slots %}
-                {% if timeslot[1] == 0 %}
-                <button class="btn btn-danger position-relative" disabled>{{ timeslot | string }}
-                  <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
-                  {{ timeslot[1] | string }}</span></button>&emsp14;
-                  <!-- {% elif (timeslot[1] | int) < 15 %} -->
-                  <button class="btn btn-warning position-relative" onclick=" setModalBody('{{date}}','{{timeslot[0][:5]}}','{{timeslot[2]}}');" data-bs-toggle="modal" data-bs-target="#priceModal">{{ timeslot | string }}
-                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">{{ timeslot[1] | string }}</span></button>&emsp14;
-                  {% else %}
-                  <button class="btn btn-success position-relative" onclick=" setModalBody('{{date}}','{{timeslot[0][:5]}}','{{timeslot[2]}}');" data-bs-toggle="modal" data-bs-target="#priceModal">{{ timeslot| string }}
-                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">{{ timeslot[1] | string }}</span></button>&emsp14;
-                {% endif %}
-              {% endfor %}
-              {% endif %}
+
+                <p class="alert alert-sm alert-primary" style="width: 40%; margin: auto;" v-if="slot.length==0">No shows</p>
+
+              <div v-else v-for="entry in slot" class="">
+                    <button v-if="entry.avSeats == 0" class="btn btn-danger position-relative" disabled>{{ entry.time }}
+                      <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
+                      {{ entry.avSeats }}</span></button>&emsp14;
+
+                    <!-- {% elif (timeslot[1] | int) < 15 %} -->
+                    <button class="btn btn-warning position-relative" v-else-if="entry.avSeats < 15" 
+                    onclick=" setModalBody();" 
+                    data-bs-toggle="modal" data-bs-target="#priceModal">{{ entry.time }}
+                      <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">{{ entry.avSeats }}</span></button>&emsp14;
+
+                    <button class="btn btn-success position-relative" v-else
+                        onclick=" setModalBody();"
+                         data-bs-toggle="modal" data-bs-target="#priceModal">{{ entry.time }}
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">{{ entry.avSeats }}</span></button>&emsp14;
+                    
+              </div>
             </div>
           </div>
         </div>
-        {% endfor %}
         </div>
       </div>
-      {% endif %}
 </div>
 </template>

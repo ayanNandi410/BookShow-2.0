@@ -99,6 +99,12 @@ const router = createRouter({
       beforeEnter : guardMyroute,
       component: () => import ("../views/userBookings.vue"),
     },
+        {
+      path: "/user/buyTicket",
+      name: "userTimeslots",
+      beforeEnter : guardMyroute,
+      component: () => import ("../views/bookTimeslot.vue"),
+    },
 
     
     // Admin Routes
