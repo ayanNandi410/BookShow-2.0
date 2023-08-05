@@ -73,6 +73,13 @@ def addData(db):
         show3.languages.append(hindi)
         db.session.add(show3)
 
+        show9 = Show(name='Quantamania 2',rating=10,duration='2 hr 30 min',timestamp=datetime.now())
+        show9.tags.append(action)
+        show9.tags.append(drama)
+        show9.languages.append(hindi)
+        show9.languages.append(malayalam)
+        db.session.add(show9)
+
         for i in range(50):
             show4 = Show(name='Anthem'+str(i),rating=random.randint(1,5),duration='2 hrs 50 min',timestamp=datetime.now())
             show4.tags.append(drama)
@@ -88,9 +95,9 @@ def addData(db):
         allocDetails4 = Allocation(venue_id=2,show_id=2,timeslot=datetime.now()+timedelta(hours=32),totSeats=210,avSeats=20,price=330.50)
         allocDetails5 = Allocation(venue_id=2,show_id=4,timeslot=datetime.now()-timedelta(hours=30),totSeats=210,avSeats=20,price=330.50)
         
-        allocDetails6 = Allocation(venue_id=2,show_id=1,timeslot=datetime.now()+timedelta(hours=28),totSeats=210,avSeats=20,price=330.50)
+        allocDetails6 = Allocation(venue_id=2,show_id=1,timeslot=datetime.now()+timedelta(hours=28),totSeats=210,avSeats=14,price=330.50)
         allocDetails8 = Allocation(venue_id=2,show_id=1,timeslot=datetime.now()-timedelta(hours=26),totSeats=210,avSeats=20,price=330.50)
-        allocDetails9 = Allocation(venue_id=2,show_id=1,timeslot=datetime.now()+timedelta(hours=24),totSeats=210,avSeats=20,price=330.50)
+        allocDetails9 = Allocation(venue_id=2,show_id=1,timeslot=datetime.now()+timedelta(hours=24),totSeats=210,avSeats=4,price=330.50)
         allocDetails10 = Allocation(venue_id=2,show_id=1,timeslot=datetime.now()-timedelta(hours=21),totSeats=210,avSeats=0,price=330.50)
         allocDetails11 = Allocation(venue_id=2,show_id=1,timeslot=datetime.now()+timedelta(hours=18),totSeats=210,avSeats=20,price=330.50)
         

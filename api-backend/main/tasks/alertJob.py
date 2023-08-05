@@ -13,21 +13,24 @@ def alert_evening_everyUser(sender, **kwargs):
         name = 'at every day'
     )
 
+
 @celeryObj.task()
 def reminder():
-    print("Started JOB")
+    print("Started JOB -> Reminder")
     role = db.session.query(Role).filter(Role.name == 'user').first()
     user_list = role.users
-    print(user_list)
+    #print(user_list)
 
     for user in user_list:
         visited = booked = False
         startDT = datetime.utcnow() - timedelta(hours=17)
+        
 
         if(user.last_login_at > startDT):
             visited = True
-        #print(user.email,visited)
-        if visited:
-            send_email(address=user.email, subject="Hurry! Movies coming up in your theatres", message="Watch now!!!!")
+        print(user.email,visited)
+        if not visited:
+            send_email(address=user.email, subject="Hurry! Movies coming up in your local theatres...",
+                        message="Hey "+ user.getFirstName() +",<br/><br/>You haven't checked out the releases today! <br/><br/>Seats booking fast! Go to BookShow and book your favorite show now.")
 
         

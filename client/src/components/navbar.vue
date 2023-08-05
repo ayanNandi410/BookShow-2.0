@@ -17,6 +17,7 @@ export default {
       message: "",
       type: "",
       notifications: [],
+      selected: "",
     };
   },
   methods: {
@@ -55,6 +56,9 @@ export default {
     },
 
     downloadCSV(name){
+
+      const btn = document.getElementById(name);
+
       axios({
         url: `${API_URL}venue/downloadCSV/${name}`, // Download File URL Goes Here
         method: 'GET',
@@ -66,6 +70,10 @@ export default {
             'Access-Control-Allow-Credentials': 'false',
         },
     }).then((res) => {
+        btn.innerHTML = "Download";
+        btn.classList.remove('btn-primary');
+        btn.classList.add('btn-success');
+
         var FILE = window.URL.createObjectURL(new Blob([res.data]));
         var docUrl = document.getElementById(name);
         docUrl.href = FILE;
@@ -131,18 +139,21 @@ computed: {
       </div>
       <div class="offcanvas-body">
         <ul class="navbar-nav justify-content-end flex-grow-1 pe-4">
+          <li class="nav-item dropdown me-4 p-1" v-if="userStatus & userType=='admin'">
 
-          <li class="nav-item dropdown me-4" v-if="userStatus & userType=='admin'">
-            <button class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+            <button class="btn dropdown-toggle" data-bs-toggle="dropdown" style="padding: 10% 20%;"
+            data-bs-auto-close="outside" aria-expanded="false">
               <img src="@/assets/bell.svg"/>
-              <span class="position-absolute top-25 start-100 translate-middle badge rounded-pill bg-primary">{{ notifications.length }}</span>
+              <span class="position-absolute top-0 start-100 badge rounded-pill bg-danger"
+                  v-if="notifications.length!=0">{{ notifications.length }}</span>
             </button>
             <ul class="dropdown-menu p-3 text-body-secondary" style="max-width: 40%;">
-              <li><h6 class="dropdown-header">Notifications</h6></li>
+              <li><p class="dropdown-header mb-0 pb-0">Notifications</p><hr/></li>
               <!-- <li><a class="dropdown-item" href="#">Action</a></li> -->
               <li v-for="item in setNotifications">
-                <div>CSV for Venue: {{ item.message }} ready.
-                  <a class="btn btn-sm btn-primary" :id="item.message" @click="downloadCSV(item.message)">Download</a>
+                <div style="font-size: 16px;">
+                  CSV for Venue: {{ item.message }} ready
+                  <a class="btn btn-sm btn-primary mt-2" style="padding: 2% 5%;" :id="item.message" @click="downloadCSV(item.message)">Get File</a>
                 </div>
               </li>
             </ul>
@@ -176,7 +187,7 @@ computed: {
 
           <li class="nav-item" v-if="userStatus & userType=='user'">
             <router-link to="/user/searchForVenues" class="nav-link"
-              ><img src="@/assets/movie.svg" /> Venues</router-link
+              ><img src="@/assets/venue.svg" /> Venues</router-link
             >
           </li>
           <li class="nav-item" v-if="userStatus & userType=='user'">
@@ -186,13 +197,13 @@ computed: {
           </li>
           <li class="nav-item" v-if="userStatus & userType=='user'">
             <router-link to="/user/bookings" class="nav-link"
-              ><img src="@/assets/movie.svg" /> Bookings</router-link
+              ><img src="@/assets/calendar.svg" /> Bookings</router-link
             >
           </li>
 
           <li class="nav-item" v-if="userStatus & userType=='admin'">
             <router-link to="/admin/venues" class="nav-link"
-              ><img src="@/assets/movie.svg" /> Venues</router-link
+              ><img src="@/assets/venue.svg" /> Venues</router-link
             >
           </li>
           <li class="nav-item" v-if="userStatus & userType=='admin'">
@@ -213,10 +224,10 @@ computed: {
             </a>
             <ul class="dropdown-menu">
               <li v-if="userStatus & userType=='admin'">
-                <router-link to="/admin/profile" class="dropdown-item"> Profile</router-link>
+                <router-link to="/admin/profile" class="dropdown-item"><img src="@/assets/person.svg" /> Profile</router-link>
               </li>
               <li v-if="userStatus & userType=='user'">
-                <router-link to="/user/profile" class="dropdown-item"> Profile</router-link>
+                <router-link to="/user/profile" class="dropdown-item"><img src="@/assets/person.svg" /> Profile</router-link>
               </li>
               <li v-if="userStatus">
                 <hr class="dropdown-divider" />
@@ -233,3 +244,11 @@ computed: {
     </div>
   </nav>
 </template>
+
+<style scoped>
+  .router-link-active{
+    background-color: rgb(81, 143, 202);
+    border-radius: 10px;
+    color: aliceblue;
+  }
+</style>

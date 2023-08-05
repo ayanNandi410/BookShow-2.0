@@ -47,6 +47,9 @@ class User(db.Model, UserMixin):
     def getName(self):
         return self.first_name + " " + self.last_name
     
+    def getFirstName(self):
+        return self.first_name
+    
     def getUserName(self):
         return self.username
     

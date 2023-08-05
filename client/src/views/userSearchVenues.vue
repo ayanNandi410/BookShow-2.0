@@ -102,7 +102,7 @@ export default {
         <div class="col-12 col-sm-3">
             <h2 style="display: inline;">Venues<span v-if="venues.length!=0"> found : </span></h2>
         </div>
-        <div class="col-12 col-sm-4">
+        <div class="col-12 col-sm-6">
                 <div class="input-group mb-3">
                     <label class="input-group-text" for="inputGroupSelect01">Venue Name</label>
                     <input class="form-control form-control-sm" name="searchVenueName" type="search" 

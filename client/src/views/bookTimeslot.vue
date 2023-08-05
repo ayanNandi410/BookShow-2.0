@@ -11,6 +11,7 @@ export default {
         venueId: this.$store.state.venue.id,
         timeslots: {},
         bookEntry: {},
+        noTimeslots: false,
     };
   },
   methods: {
@@ -37,6 +38,7 @@ export default {
             this.message = data.error_message;
             this.head_end = data.error_code;
             this.loading = false;
+            this.noTimeslots = true;
           }
           else {
             this.timeslots = data;
@@ -53,23 +55,7 @@ export default {
     },
   },
   computed: {
-    countTimeslots(){
-      let count = 0;
-
-      if(this.timeslots=={})
-      {
-        return 0;
-      }
-
-      for(x in 7)
-      {
-        if(this.timeslots.slots[x]==[])
-        {
-          count++;
-        }
-      }
-      return count;
-    }
+  
   },
   components: { },
 
@@ -105,7 +91,7 @@ export default {
 
 <div class="body container" style="margin-top: 6%; padding-bottom: 25%;">
   <div class="row text-center">
-    <h4>Choose your timeslot</h4>`<br/>
+    <h4 class="alert alert-success mt-3 mb-4">Choose your timeslot</h4><br/>
   </div>
     <div class="row text-center">
       <div class="col-12 col-sm-6">
@@ -116,11 +102,11 @@ export default {
       </div>
     </div><hr/>
 
-      <br/><br/><h4 class="alert alert-success text-center" v-if="countTimeslots">No slots Available in this week.<br/> Will be added soon..</h4>
+      <br/><br/><h4 class="alert alert-success text-center" v-if="noTimeslots">No slots Available in this week.<br/> Will be added soon..</h4>
 
-    <div class="card text-center" style="width: fit-content; margin: auto;">
+    <div class="card text-center" style="width: fit-content; margin: auto;" v-else>
         <div class="card-header" style="background-color: #1f87c8;">
-          <p class="card-text text-white">Choose Day from below</p>
+          <p class="card-text text-white">Choose day by clicking on Date tab from below</p>
           <ul class="nav nav-tabs card-header-tabs" id="timeNavbar">
             <li class="nav-item" v-for="(day,index) in timeslots.days">
 
@@ -138,7 +124,7 @@ export default {
         <div class="collapse" data-bs-parent="#timeslots" v-for="(slot,index) in timeslots.slots" :id="index" >
           <div class="card card-body">
             <h5 class="card-title" style="margin-bottom: 10px;">{{ timeslots.days[index].substring(4,12) }}</h5>
-            <div class="card-text">
+            <div class="card-text mt-3">
 
                 <p class="alert alert-sm alert-primary" style="width: 40%; margin: auto;" v-if="slot.length==0">No shows</p>
 

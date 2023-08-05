@@ -126,6 +126,15 @@ export function downloadVenueCSV(name){
     });
 }
 
+export function fetchVenuesByShow(token,id,city) {
+  const requestOptions = {
+    method: "GET",
+    headers: { "Content-Type": "application/json", "Authentication-Token": token },
+  };
+    return fetch(`${API_URL}venue/byShow/${id}?city=${city}`, requestOptions)
+  
+}
+
 
 export function addShow(token,show) {
   const requestOptions = {
@@ -150,6 +159,15 @@ export function fetchPopularShows(token) {
     headers: { "Content-Type": "application/json", "Authentication-Token": token },
   };
     return fetch(`${API_URL}popularShows`, requestOptions)
+  
+}
+
+export function fetchShowsByName(token,name) {
+  const requestOptions = {
+    method: "GET",
+    headers: { "Content-Type": "application/json", "Authentication-Token": token },
+  };
+    return fetch(`${API_URL}showByName/${name}`, requestOptions)
   
 }
 

@@ -18,12 +18,12 @@ const props = defineProps({
                 <img
                     src="@/assets/star-full.svg"
                     class="filter-orange" width="20"
-                    v-for="(n, index) in props.rating"
+                    v-for="(n, index) in parseInt(props.rating/2)"
                 />
                 <img
                     src="@/assets/star-empty.svg"
                     class="filter-orange" width="20"
-                    v-for="(n, index) in 5 - props.rating"
+                    v-for="(n, index) in 5 - parseInt(props.rating/2)"
                 />
                 </div>
                 <div class="p-4">

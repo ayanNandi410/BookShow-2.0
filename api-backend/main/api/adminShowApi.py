@@ -58,6 +58,21 @@ class PopularShowsApi(Resource):
             raise NotFoundError(error_message='No Shows found',status_code=404,error_code="SW013")
         
 
+class ShowsByNameApi(Resource):
+
+    @marshal_with(userShow_output_fields)
+    @auth_required('token')
+    @roles_accepted('admin','user')
+    def get(self,name):
+
+        shows = db.session.query(Show).filter(Show.name.ilike(f'%{name}%')).all()
+
+        if shows:
+            return shows
+        else:
+            raise NotFoundError(error_message='No Shows found',status_code=404,error_code="SW013")
+        
+
 class ShowAPI(Resource):
 
     # get a show by show name. Show names are assumed to be unique

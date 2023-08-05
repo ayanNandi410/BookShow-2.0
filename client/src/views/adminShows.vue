@@ -1,6 +1,6 @@
 <script>
 import AdminShowCard from '../components/AdminShowCard.vue'
-import { fetchPopularShows, deleteShow } from '../api';
+import { fetchPopularShows, deleteShow, fetchShowsByName } from '../api';
 import ToastMsg from '../components/toastMsg.vue'
 
 export default {
@@ -22,6 +22,8 @@ export default {
       head_end: "",
       message: "",
       type: "",
+      searched: false,
+      showName: '',
     };
   },
   methods: {
@@ -88,6 +90,37 @@ export default {
           console.log("Fetch Error: "+e)
           }
       );   
+  },
+
+  load_shows_by_name(){
+    this.type = "error";
+    this.toastShow = true;
+    this.header = "Search Show";
+    this.loading = true;
+
+    fetchShowsByName(this.user.auth_token,this.showName)
+      .then(async res =>  {
+          const data = await res.json()
+          console.log(data)
+
+          if(!res.ok){
+            this.head_end = data.error_code;
+            this.message = data.error_message;
+            this.loading = false;
+          }
+          else{
+            this.toastShow = false;
+            this.shows = data;
+            this.searched = true;
+            this.loading = false;
+          }
+          
+      })
+      .catch(e => {
+        this.message = e.data;
+          console.log("Fetch Error: "+e)
+          }
+      ); 
   }
 },
 
@@ -144,8 +177,17 @@ components: { AdminShowCard, ToastMsg },
     </div>
 
     <div class="row">
-      <div class="col-12 col-sm-6"><h2>&emsp;Latest Shows (Top 20)</h2></div>
-      <div class="col-12 col-sm-2 offset-sm-4">
+      <div class="col-12 col-sm-5" v-if="!searched"><h2>&emsp;Latest Shows (Top 20)</h2></div>
+      <div class="col-12 col-sm-5" v-else><h2>&emsp;Search Results</h2></div>
+      <div class="col-12 col-sm-4">
+          <div class="input-group mb-3">
+              <label class="input-group-text" for="inputGroupSelect01">Show Name</label>
+              <input class="form-control form-control-sm" name="searchShowName" type="search" 
+              placeholder="Search for shows" aria-label="Search" v-model="showName">
+              <button class="btn btn-success" @click="load_shows_by_name">Search</button>
+          </div>
+      </div>
+      <div class="col-12 col-sm-2 offset-sm-1">
         <router-link to="/admin/show/add" class="btn btn-info">+ Add Show</router-link>
       </div>
     </div>
@@ -160,7 +202,7 @@ components: { AdminShowCard, ToastMsg },
 
     <h2 class="alert alert-primary text-center" style="margin: 8% 10% 20%;" v-if="shows.length==0">Did not find any show. Try again..</h2>
 
-    <div class="row row-cols-md-3 row-cols-sm-2 row-cols-xs-1 row-cols-1 g-3">    
+    <div class="row row-cols-md-3 row-cols-sm-2 row-cols-xs-1 row-cols-1 g-3" v-else>    
       <AdminShowCard v-for="show in shows" 
         v-bind:id=show.id.toString()
         v-bind:name="show.name"

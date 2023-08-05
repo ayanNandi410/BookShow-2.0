@@ -16,22 +16,24 @@ const props = defineProps({
         <div class="d-flex justify-content-end">
           <img
             src="@/assets/star-full.svg"
-            class="filter-orange"
-            v-for="(n, index) in props.rating"
+            class="filter-orange" width="20"
+            v-for="(n, index) in parseInt(props.rating/2)"
           />
           <img
             src="@/assets/star-empty.svg"
-            class="filter-orange"
-            v-for="(n, index) in 5 - props.rating"
+            class="filter-orange" width="20"
+            v-for="(n, index) in 5 - parseInt(props.rating/2)"
           />
         </div>
-        <img
+        <div class="p-4">
+          <img
           src="@/assets/movie.png"
           class="card-img-top blurImage"
           height="250"
           width="100"
           alt="..."
-        />
+          />
+        </div>
       </div>
       <div class="card-body">
         <h5 class="card-title">{{ props.name }}</h5>
@@ -40,13 +42,13 @@ const props = defineProps({
             class="badge bg-success mb-1"
             style="margin: auto 2%"
             v-for="tag in props.tags"
-            >{{ tag }}</span
+            >{{ tag.name }}</span
           >&nbsp;<br />
           <span
             class="badge bg-dark text-white mb-1"
             style="margin: auto 2%"
             v-for="lng in props.languages"
-            >{{ lng }}</span
+            >{{ lng.name }}</span
           >
           <span class="badge bg-info text-white">{{ props.duration }}</span
           >&nbsp;
@@ -58,6 +60,7 @@ const props = defineProps({
           class="btn btn-sm btn-warning"
           data-bs-toggle="modal"
           data-bs-target="#reviewsModal"
+          @click="$emit('showReviews')"
         >
           Reviews</button
         >&emsp13;
@@ -68,6 +71,7 @@ const props = defineProps({
           data-bs-toggle="offcanvas"
           data-bs-target="#chVenueCanvas"
           aria-controls="chVenueCanvas"
+          @click="$emit('showVenues')"
         >
           Venues
         </button>

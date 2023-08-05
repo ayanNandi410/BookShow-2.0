@@ -120,7 +120,8 @@ export default {
                         ><br/>
                         <span class="badge bg-info text-white">{{ show.duration }}</span>&nbsp;
                         <span class="badge bg-warning text-dark mt-3">Rating: {{ show.rating }} / 10</span>
-                        <router-link to="/user/buyTicket" @click="saveShow(show.id,show.name)" class="btn btn-primary mt-3">Buy Tickets</router-link>
+                        <router-link to="/user/buyTicket" @click="saveShow(show.id,show.name)">
+                            <button class="btn btn-primary mt-3" data-bs-toggle="offcanvas">Buy Tickets</button></router-link>
                         </div>
                     </div>
                     </div>

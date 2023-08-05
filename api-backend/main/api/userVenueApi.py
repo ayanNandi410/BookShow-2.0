@@ -57,3 +57,30 @@ class UserVenueAPI(Resource):
         else:
             raise NotFoundError(error_message='Venue not found',status_code=404,error_code="VN001")
         
+
+# Get Venue List by Show Name
+class VenueListByShowApi(Resource):
+
+    @marshal_with(venue_output_fields)
+    def get(self,sid):
+        city = request.args.get('city',None)
+           
+        show = db.session.query(Show).get(sid)
+        venues = show.venues
+
+
+        if city is not None: 
+            venueList = []
+            for venue in venues:
+                if venue.city == city:
+                    venueList.append(venue)
+            if venueList != []:
+                return venueList
+            else:
+                raise NotFoundError(error_message='No Venues found for show with city name',status_code=404,error_code="VN012")
+        
+        if venues:
+            return venues
+        else:
+            raise NotFoundError(error_message='No Venues found for show',status_code=404,error_code="VN011")
+        

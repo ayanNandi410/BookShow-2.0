@@ -86,12 +86,18 @@ const router = createRouter({
       beforeEnter : guardMyroute,
       component: () => import ("../views/userProfile.vue"),
     },
-
     {
       path: "/user/venues/forCity/:city",
       name: "userVenues",
       beforeEnter : guardMyroute,
       component: () => import ("../views/userVenues.vue"),
+    },
+
+    {
+      path: "/user/shows",
+      name: "userShows",
+      beforeEnter : guardMyroute,
+      component: () => import ("../views/userShows.vue"),
     },
     {
       path: "/user/bookings",

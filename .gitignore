@@ -15,4 +15,4 @@ extra files
 
 dist
 
-files
+*.csv

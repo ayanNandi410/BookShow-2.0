@@ -4,8 +4,8 @@ from .api.auth import RegisterAPI
 from .api.test import TestAPI
 from .api.cityApi import GetAllCitiesAPI
 from .api.adminVenueApi import AdminVenueListByCityAPI, AdminVenueAPI
-from .api.adminShowApi import PopularShowsApi, ShowAPI, ListShowByVenueApi
-from .api.userVenueApi import UserVenueListByCityAPI, GetVenueByNameApi, UserVenueAPI
+from .api.adminShowApi import PopularShowsApi, ShowAPI, ListShowByVenueApi, ShowsByNameApi
+from .api.userVenueApi import UserVenueListByCityAPI, GetVenueByNameApi, UserVenueAPI, VenueListByShowApi
 from .api.allocationApi import AllocationBetweenDatesAPI, AllocationAPI, AllocationForSevenDaysAPI
 from .api.exportAdminShow import ExportShowAPI, DownloadCSVAPI
 
@@ -21,7 +21,9 @@ def getConfiguredApi(app):
     
     # venue
     apiV.add_resource(GetVenueByNameApi,"/api/venueByName/<string:name>",endpoint="/venueByName")
-    
+    apiV.add_resource(ShowsByNameApi,"/api/showByName/<string:name>",endpoint="/showByName")
+    apiV.add_resource(VenueListByShowApi,"/api/venue/byShow/<string:sid>",endpoint="/venue/byShow")
+
     # show
     apiV.add_resource(ListShowByVenueApi,"/api/show/byVenue/<string:vid>",endpoint="/show/byVenue")
 

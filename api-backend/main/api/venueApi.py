@@ -189,7 +189,7 @@ class VenueListByNameApi(Resource):
 class VenueListByShowApi(Resource):
 
     @marshal_with(venue_output_fields)
-    def get(self,sname):
+    def get(self,sid):
         city = request.args.get('city',None)
            
         show = db.session.query(Show).filter(Show.name == sname).first()

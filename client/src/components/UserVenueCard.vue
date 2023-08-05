@@ -17,13 +17,15 @@ const props = defineProps({
             >Capacity : {{ props.capacity }}</span
           >
         </div>
-        <img
+        <div class="p-4">
+          <img
           src="@/assets/hall.png"
           class="card-img-top blurImage"
           height="200"
           width="30"
           alt="..."
         />
+        </div>
       </div>
       <div class="card-body">
         <h5 class="card-title">{{ props.name }}</h5>

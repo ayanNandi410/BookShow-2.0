@@ -66,8 +66,8 @@ export default {
             <div class="card" style="width: fit-content;">
               <img src="@/assets/city.svg" class="card-img-top mt-3" alt="" height="50" width="50" />
                 <div class="card-body">
-                  <a href="#" class="btn btn-sm btn-info" data-bs-dismiss="modal" 
-                  data-bs-target="#cityModal" style="margin: auto 1%;" @click="routeVenues(city)">{{ city }}</a>
+                  <button class="btn btn-sm btn-info" data-bs-dismiss="modal" 
+                   style="margin: auto 1%;" @click="routeVenues(city)">{{ city }}</button>
                 </div>
               </div>
             </div>
@@ -78,14 +78,14 @@ export default {
     </div>
 </div>
 <div class="body vh-100">
-  <div class="container py-5 col-8">
+  <div class="container py-5 col-10">
     <h1 class="display-5 fw-bold">Welcome <i>{{ user.name }}</i></h1>
-    <p class="col-md-8 fs-4">You have reached a place where you can explore all venues available in your City
+    <p class="col-md-10 fs-4 mt-4 mb-4">You have reached a place where you can explore all venues available in your City
       and book your favourite show as well. You may use the links available at the top to begin your journey.
     </p>
     <div class="mt-3">
       <button class="btn btn-primary btn-md" type="button" 
-      data-bs-toggle="modal" data-bs-target="#cityModal">See Venues</button> 
+      data-bs-toggle="modal" data-bs-target="#cityModal">See Venues for City</button> 
     </div>
 </div>
 </div>
