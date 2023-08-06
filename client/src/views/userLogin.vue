@@ -147,7 +147,7 @@ export default {
 </script>
 
 <template>
-  <div class="body">
+  <div class="body container">
     <ToastMsg 
     v-bind:header="header" 
     v-bind:head_end="head_end" 
@@ -158,7 +158,7 @@ export default {
 
     <div class="container-fluid">
       <div class="row d-flex justify-content-center">
-        <div class="col-md-9 col-lg-6 col-xl-5">
+        <div class="col-md-9 col-lg-6 col-xl-5 mb-2">
           <div class="card" style="width: 25rem">
             <img
               src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp"
@@ -177,7 +177,7 @@ export default {
             </div>
           </div>
         </div>
-        <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
+        <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1 mt-3">
           <!-- <form class="mt-4" method="get"> -->
             <h3 class="alert alert-primary mb-4">Enter Details</h3>
             <!-- Email input -->

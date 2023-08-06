@@ -151,16 +151,34 @@ const router = createRouter({
       component: () => import('../views/addVenue.vue'),
     },
     {
+      path: "/admin/venue/update",
+      name: "updateVenue",
+      beforeEnter : guardMyroute,
+      component: () => import('../views/updateVenue.vue'),
+    },
+    {
       path: "/admin/show/add",
       name: "addShow",
       beforeEnter : guardMyroute,
       component: () => import('../views/addShow.vue'),
     },
     {
+      path: "/admin/show/update",
+      name: "updateShow",
+      beforeEnter : guardMyroute,
+      component: () => import('../views/updateShow.vue'),
+    },
+    {
       path: "/admin/timings/view",
       name: "displayTimings",
       beforeEnter : guardMyroute,
       component: () => import('../views/adminTimings.vue'),
+    },
+    {
+      path: "/admin/allocateTimings",
+      name: "allocateTimings",
+      beforeEnter : guardMyroute,
+      component: () => import('../views/adminAllocateTiming.vue'),
     },
 
   ],

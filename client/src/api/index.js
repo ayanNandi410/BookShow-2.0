@@ -96,6 +96,15 @@ export function addVenue(token,venue) {
   return fetch(`${API_URL}venue`, requestOptions)
 }
 
+export function updateVenue(token,venue) {
+  const requestOptions = {
+    method: "PUT",
+    headers: { "Content-Type": "application/json", "Authentication-Token": token },
+    body: JSON.stringify(venue),
+  };
+  return fetch(`${API_URL}venue`, requestOptions)
+}
+
 export function exportVenue(token, id) {
   const requestOptions = {
     method: "GET",
@@ -145,6 +154,15 @@ export function addShow(token,show) {
   return fetch(`${API_URL}show`, requestOptions)
 }
 
+export function updateShow(token,show) {
+  const requestOptions = {
+    method: "PUT",
+    headers: { "Content-Type": "application/json", "Authentication-Token": token },
+    body: JSON.stringify(show),
+  };
+  return fetch(`${API_URL}show`, requestOptions)
+}
+
 export function deleteShow(token,id) {
   const requestOptions = {
     method: "DELETE",
@@ -180,28 +198,38 @@ export function fetchShowsByVenue(token,id) {
   
 }
 
-export function fetchTimings(details) {
+export function fetchTimings(token,details) {
   const requestOptions = {
     method: "GET",
-    headers: { "Content-Type": "application/json" }
+    headers: { "Content-Type": "application/json", "Authentication-Token": token }
   };
     return fetch(`${API_URL}timingWithRange?startDate=${details.startDate}
                 &endDate=${details.endDate}&sid=${details.sid}&vid=${details.vid}`, requestOptions)
   
 }
 
-export function deleteTiming(id) {
+export function addTiming(token,timing) {
+  const requestOptions = {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "Authentication-Token": token },
+    body: JSON.stringify(timing),
+  };
+  return fetch(`${API_URL}timing`, requestOptions)
+}
+
+
+export function deleteTiming(token,id) {
   const requestOptions = {
     method: "DELETE",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", "Authentication-Token": token },
   };
   return fetch(`${API_URL}timing/${id}`, requestOptions)
 }
 
-export function fetchTimeslots(details) {
+export function fetchTimeslots(token,details) {
   const requestOptions = {
     method: "GET",
-    headers: { "Content-Type": "application/json" }
+    headers: { "Content-Type": "application/json" , "Authentication-Token": token }
   };
     return fetch(`${API_URL}timing/sevenDays?sid=${details.sid}&vid=${details.vid}`, requestOptions)
   
@@ -225,16 +253,12 @@ export function registerBooking(token, details) {
     return fetch(`${API_URL}booking`, requestOptions)
   
 }
-// extra
 
-export function fetchSurvey(surveyId) {
-  return axios.get(`${API_URL}/surveys/${surveyId}/`)
-}
-
-export function saveSurveyResponse(surveyResponse) {
-  return axios.put(`${API_URL}/surveys/${surveyResponse.id}/`, surveyResponse)
-}
-
-export function postNewSurvey(survey) {
-  return axios.post(`${API_URL}/surveys/`, survey)
+export function fetchReviews(token,sid) {
+  const requestOptions = {
+    method: "GET",
+    headers: { "Content-Type": "application/json", "Authentication-Token": token },
+  };
+    return fetch(`${API_URL}review/${sid}`, requestOptions)
+  
 }

@@ -10,6 +10,8 @@ from .api.allocationApi import AllocationBetweenDatesAPI, AllocationAPI, Allocat
 from .api.exportAdminShow import ExportShowAPI, DownloadCSVAPI
 
 from .api.bookingApi import BookTicketAPI
+from .api.reviewApi import MovieReviewAPI
+from .api.calcReviewApi import CalcReviewAPI
     
 def getConfiguredApi(app):
     apiV = Api(app)
@@ -33,7 +35,7 @@ def getConfiguredApi(app):
     apiV.add_resource(PopularShowsApi,"/api/popularShows",endpoint="/popularShows")
     apiV.add_resource(ShowAPI,"/api/show/<string:id>","/api/show",endpoint="/show")
     apiV.add_resource(AllocationBetweenDatesAPI,"/api/timingWithRange",endpoint="/timingWithRange")
-    apiV.add_resource(AllocationAPI,"/api/timing/<string:aid>",endpoint="/timing/<string:aid>")
+    apiV.add_resource(AllocationAPI,"/api/timing/<string:aid>","/api/timing",endpoint="/timing/<string:aid>")
     apiV.add_resource(AllocationForSevenDaysAPI,"/api/timing/sevenDays",endpoint="/sevenDays")
 
     # for User
@@ -41,6 +43,8 @@ def getConfiguredApi(app):
     apiV.add_resource(UserVenueAPI,"/api/user/venue/<string:id>","/api/venue",endpoint="/user/venue")
 
     apiV.add_resource(BookTicketAPI,"/api/booking","/api/booking/<string:email>",endpoint="/booking")
+    apiV.add_resource(MovieReviewAPI,"/api/review","/api/review/<int:sid>",endpoint="/review")
+    apiV.add_resource(CalcReviewAPI,"/api/updateReview","/api/updateReview/<string:sid>",endpoint="/updateReview")
 
     apiV.add_resource(ExportShowAPI,"/api/exportVenue/<vid>",endpoint="/exportVenue")
     apiV.add_resource(DownloadCSVAPI,"/api/venue/downloadCSV/<name>",endpoint="/venue/downloadCSV")

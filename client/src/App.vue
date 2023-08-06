@@ -21,7 +21,17 @@ import PageFooter from "./components/pageFooter.vue";
 </template>
 
 <style>
-.body {
-  margin: 8% auto;
-}
+  @media (max-width: 768px) {
+    .container, .body{
+      margin: 35% 2%;
+    }
+
+  }
+  @media (min-width: 768px) {
+    .container, .body{
+      margin: 8% auto;
+    }
+  }
+  
+
 </style>

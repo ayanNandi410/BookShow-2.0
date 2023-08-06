@@ -45,8 +45,7 @@ booking_output_fields = {
 create_booking_parser = reqparse.RequestParser()
 create_booking_parser.add_argument('vid')
 create_booking_parser.add_argument('sid')
-create_booking_parser.add_argument('date')
-create_booking_parser.add_argument('time')
+create_booking_parser.add_argument('aid')
 create_booking_parser.add_argument('email')
 create_booking_parser.add_argument('allocSeats',type=int, help="Seats must be an integer")
 create_booking_parser.add_argument('totPrice', type=float, help="Not a valid number or price")
@@ -59,7 +58,7 @@ class BookTicketAPI(Resource):
     @roles_accepted('user')
     def get(self,email):
 
-        bookings = db.session.query(BookTicket).filter(BookTicket.user_email == email).order_by(BookTicket.timestamp).limit(20).all()
+        bookings = db.session.query(BookTicket).filter(BookTicket.user_email == email).order_by(desc(BookTicket.timestamp)).limit(20).all()
 
         if not bookings:
             raise NotFoundError(error_message='No Booking found',status_code=404,error_code="BK001")
@@ -73,8 +72,7 @@ class BookTicketAPI(Resource):
         bk_args = create_booking_parser.parse_args()
         vid = bk_args.get('vid',None)
         sid = bk_args.get('sid',None)
-        fDate = bk_args.get('date',None)
-        fTime = bk_args.get('time',None)
+        aid = bk_args.get('aid',None)
         email = bk_args.get('email',None)
         allcSeats = bk_args.get('allocSeats',None)
         ticketPrice = bk_args.get('totPrice',None)
@@ -90,16 +88,6 @@ class BookTicketAPI(Resource):
 
         if float(ticketPrice) < 0.0:
             raise BusinessValidationError(status_code=400,error_code="AL003",error_message="Invalid value for Ticket Price")
-
-        try:
-            rDate = dt.strptime(fDate, "%Y-%m-%d").date()
-        except(ValueError):
-            raise BusinessValidationError(status_code=400,error_code="AL004",error_message="Invalid Date or date format")
-
-        try:
-            rTime = dt.strptime(fTime, "%H:%M").time()
-        except(ValueError):
-            raise BusinessValidationError(status_code=400,error_code="AL005",error_message="Invalid Time or time format")
 
         if allcSeats is None:
             raise BusinessValidationError(status_code=400,error_code="AL006",error_message="Allocated seat count is required")
@@ -117,10 +105,9 @@ class BookTicketAPI(Resource):
         if not venue:
             raise BusinessValidationError(status_code=400,error_code="AL009",error_message="Venue does not exist")
 
-        timestamp = dt.now()
-        timeslot = dt.combine(rDate,rTime)
+        
     
-        allocation = db.session.query(Allocation).filter(Allocation.show == show, Allocation.venue == venue, Allocation.timeslot == timeslot).first()
+        allocation = db.session.query(Allocation).get(aid)
         if not allocation:
             raise BusinessValidationError(status_code=400,error_code="AL0019",error_message="Allocation not found")
 

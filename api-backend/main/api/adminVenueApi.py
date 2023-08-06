@@ -121,7 +121,7 @@ class AdminVenueAPI(Resource):
         if desc is None or desc == '':
             raise BusinessValidationError(status_code=400,error_code="VN007",error_message="Description is required")
 
-        venue = db.session.query(Venue).filter(Venue.id == int(id)).first()
+        venue = db.session.query(Venue).get(id)
 
         from datetime import datetime
         timestamp = datetime.now()

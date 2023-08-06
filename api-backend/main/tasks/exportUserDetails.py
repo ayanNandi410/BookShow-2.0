@@ -3,7 +3,7 @@ from weasyprint import HTML
 import uuid, os
 from datetime import datetime, timedelta
 from ..workers import celeryObj
-from ..models import User, Role
+from ..models import User, Role, BookTicket, MovieReview
 from ..db import db
 from ..send_email import send_email
 from celery.schedules import crontab
@@ -40,7 +40,11 @@ def MontlyEnmtReportJob(type='html'):
     user_list = role.users
     #print(user_list)
 
+    startMonth = datetime.now().replace(day=1,hour=0,minute=0,second=0)
+
     for user in user_list:
-        pass
+        bookings = db.session.query(BookTicket).filter(BookTicket.user_email == user.email, BookTicket.timestamp > startMonth).all()
+        reviews = db.session.query(MovieReview).filter(MovieReview.user_email == user.email, MovieReview.timestamp > startMonth).all()
+
 
         #send_email(address=user.email, subject="Hurry! Movies coming up in your local theatres",message="Hey "+ firstName +",\n\nYou haven't checked out the recent releases! Seats booking fast! Go to BookShow and book your favorite show now.")

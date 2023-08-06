@@ -140,6 +140,9 @@ class Allocation(db.Model):
 
     def __repr__(self):
         return "< Allocation : "+self.venue.name+","+self.show.name+","+str(self.timeslot)+","+str(self.timeslot)+">"
+    
+    def getId(self):
+        return id
 
 class BookTicket(db.Model):
     __tablename__ = 'BookTicket'

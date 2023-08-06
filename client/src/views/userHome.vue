@@ -54,8 +54,8 @@ export default {
 
 <template>
     <!--Choose City Modal -->
-<div class="modal fade in" tabindex="-1" id="cityModal" data-bs-backdrop="static">
-    <div class="modal-dialog">
+<div class="modal fade in " tabindex="-1" id="cityModal" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="staticBackdropLabel">Choose City</h5>

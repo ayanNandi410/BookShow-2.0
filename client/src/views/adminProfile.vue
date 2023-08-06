@@ -24,11 +24,11 @@ export default {
 
 <template>
     <div class="body vh-100">
-  <div class="container py-5 col-8">
+  <div class="container py-5 col-10">
     <div class="row">
       <div class="col-12 col-sm-8">
         <h1 class="display-5 fw-bold">Admin Profile</h1>
-        <p class="col-md-8 fs-4"><br/>Name : <b>{{ user.name }}</b><br/>
+        <p class="col-sm-10 col-12 fs-4"><br/>Name : <b>{{ user.name }}</b><br/>
           Email : <b>{{ user.email }}</b><br/>
           Username : <b>{{ user.username }}</b></p>
       </div>

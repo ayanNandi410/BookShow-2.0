@@ -1,20 +1,69 @@
 <script>
-import { fetchTimeslots } from '../api'
+import ToastMsg from '../components/toastMsg.vue'
+import { fetchTimeslots, registerBooking } from '../api'
 
 export default {
   name: "userTimeslots",
   data() {
     return {
+        user : this.$store.getters.fetch_user_details,
         showName: this.$store.state.show.name,
         venueName: this.$store.state.venue.name,
         showId: this.$store.state.show.id,
         venueId: this.$store.state.venue.id,
         timeslots: {},
         bookEntry: {},
+        aid: null,
         noTimeslots: false,
+        seats: 1,
+        avSeats: 0,
+        price: 0.00,
+        message: "",
+        header: "",
+        head_end: "",
+        type: "",
+        toastShow: false,
+
     };
   },
   methods: {
+
+    confirmBooking(){
+
+      this.toastShow = true;
+
+      const details = {
+        vid: this.venueId,
+        sid: this.showId,
+        aid: this.aid,
+        email: this.user.email,
+        allocSeats: this.seats,
+        totPrice: this.getPrice,
+      }
+
+      registerBooking(this.user.auth_token,details)
+        .then(async res => {
+          const data = await res.json()
+          this.header = "Book Ticket";
+          this.type = "error";
+
+          if (!res.ok) {
+            this.message = data.error_message;
+            this.head_end = data.error_code;
+            this.loading = false;
+
+          }
+          else {
+            this.loading = false;
+            this.$router.replace('/user/bookings');
+          }
+
+        })
+        .catch(e => {
+          this.message = e.data;
+          console.log("Fetch Error: " + e)
+        });
+    },
 
     setModalBody(entry, dateIndex){
       this.bookEntry = {
@@ -23,13 +72,15 @@ export default {
         seats_avl: entry.avSeats,
         perPsnPrice: entry.price
       }
+      this.price = entry.price;
+      this.aid = entry.id;
     },
 
     fetchAllTimeslots() {
       this.loading = true;
       console.log("inside fetch booking");
 
-      fetchTimeslots({ sid: this.showId, vid: this.venueId })
+      fetchTimeslots(this.user.auth_token,{ sid: this.showId, vid: this.venueId })
         .then(async res => {
           const data = await res.json()
           this.header = "Get Timeslots"
@@ -55,17 +106,34 @@ export default {
     },
   },
   computed: {
-  
+    getPrice(){
+      return (this.seats * this.price).toFixed(2);
+    }
   },
-  components: { },
+  components: { ToastMsg },
 
   beforeMount(){
     this.fetchAllTimeslots();
-  }
+  },
+
+  onMounted(){
+    this.$store.commit('set_user_details_from_local');
+    this.user = this.$store.getters.fetch_user_details;
+  },
+
 };
 </script>
 
 <template>
+
+<ToastMsg 
+    v-bind:header="header" 
+    v-bind:head_end="head_end" 
+    v-bind:message="message" 
+    v-bind:type="type" 
+    v-if="toastShow"
+    @close-toast="closeToast" />
+
     <!-- Ticket Price Modal -->
 <div class="modal fade" id="priceModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
@@ -83,7 +151,45 @@ export default {
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <router-link to="/user/confirmTicket" data-bs-dismiss="modal" class="btn btn-primary">Book Tickets</router-link>
+        <router-link to="/user/confirmTicket" data-bs-toggle="modal" data-bs-target="#confirmModal" class="btn btn-primary">Book Tickets</router-link>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <!-- Confirm Ticket Modal -->
+    <div class="modal fade" id="confirmModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="confirmModalTitle">Slot Details</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="confirmModalBody">
+        <p>Show : {{ showName }}<br/>Venue : {{ venueName }}</p>
+        <p>Time: {{ bookEntry.time }}<br/>
+        Date: {{ bookEntry.date }}</p>
+        <p>Price per seat: <span style="color: red;">&#8377; {{ bookEntry.perPsnPrice }}</span><br/></p>
+        <p>
+          <div class="input-group input-group-md mb-3">
+            <span class="input-group-text" >Seats</span>
+            <input type="number" class="form-control" name="showSeats" 
+            id="showSeats" placeholder="Enter value"  v-model="seats" required>
+            <div id="seatsCheck" v-if="seats<=0" style="display: block;" class="invalid-feedback">&emsp;Atleast one seat must be booked</div>
+          </div>
+        </p>
+        <p>
+          <div class="input-group input-group-md mb-3">
+            <span class="input-group-text" >Total Price</span>
+            <input type="number" class="form-control" name="showTotPrice" readonly
+            id="showTotPrice"  v-model="getPrice" required>
+          </div>
+        </p>
+        <p>Confirm Booking?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button @click="confirmBooking" data-bs-toggle="modal" id="confirmBt" class="btn btn-primary">Confirm</button>
       </div>
     </div>
   </div>
@@ -148,5 +254,8 @@ export default {
         </div>
         </div>
       </div>
-</div>
+      <div style="margin: ;">
+        <p v-if="error_message" class="badge bg-danger text-center me-4 mt-5">Error: {{ error_message }}</p>
+      </div>
+    </div>
 </template>

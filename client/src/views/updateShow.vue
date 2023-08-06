@@ -1,19 +1,19 @@
 <script>
 import ToastMsg from '../components/toastMsg.vue'
-import { addShow } from '../api'
+import { updateShow } from '../api'
 
 export default {
-  name: "addShow",
+  name: "updateShow",
   data() {
     return {
       user : this.$store.getters.fetch_user_details,
+      show: { id: this.$store.state.show.id, name: this.$store.state.show.name },
       toastShow: false,
       header: "",
       head_end: "",
       message: "",
       type: "",
       name: "",
-      showId: null,
       rating: null,
       tags: [],
       languages: [],
@@ -23,25 +23,8 @@ export default {
   },
   methods: {
 
-    saveShow(id,name){
-            this.$store.commit('set_choosen_show', { id: id, name: name });
-    },
-
     closeToast(){
       this.toastShow = false;
-    },
-
-    allocateShow(){
-        if(this.registered){
-            this.$store.commit('set_choosen_show', { id: this.showId, name: this.name });
-            this.$router.replace('/admin/allocateTimings');
-        }
-        else{
-            this.type = 'info';
-            this.toastShow = true;
-            this.message = "Register Show First";
-            this.header = "Allocate Show";
-        }
     },
 
     formValidate(){
@@ -98,19 +81,19 @@ export default {
 
         if(result)
         {
-            this.addNewShow();
+            this.updateCurShow();
         }
         return false;
     },
 
-    addNewShow(){
+    updateCurShow(){
 
-    this.header = "Add New Show";
+    this.header = "Update Show";
     this.type = "error";
 
-    const show = { name: this.name, rating: this.rating, tags: this.tags, languages: this.languages, duration: this.duration }
+    const show = { id: this.show.id ,name: this.name, rating: this.rating, tags: this.tags, languages: this.languages, duration: this.duration }
 
-    addShow(this.user.auth_token,show)
+    updateShow(this.user.auth_token,show)
       .then(async res =>  {
           const data = await res.json()
           this.toastShow = true;
@@ -122,7 +105,6 @@ export default {
           }
           else{
             this.message = "Success";
-            this.showId = data.id;
             this.type = "info";
             this.registered = true;
           }
@@ -164,7 +146,7 @@ export default {
     <div class="container h-custom">
         <div class="row">
         <div class="col-12 col-sm-4">
-            <h2>Add new Show</h2>
+            <h2>Update Show</h2>
         </div>
         <div class="col-12 col-sm-2 offset-sm-6">
             <button class="btn btn-success" @click="$router.go(-1)">Go Back</button>
@@ -290,13 +272,9 @@ export default {
             </div>
 
             <div class="row mb-3">
-                <div class="col-4 offset-2">
+                <div class="col-5 offset-5">
                     <button class="btn btn-primary btn-md" @click="formValidate"
-                    style="padding-left: 2.5rem; padding-right: 2.5rem;">Register Show</button>
-                </div>
-                <div class="col-4">
-                    <button class="btn btn-success btn-md" @click="allocateShow" 
-                    style="padding-left: 2.5rem; padding-right: 2.5rem;" >Allocate to Venues</button>
+                    style="padding-left: 2.5rem; padding-right: 2.5rem;">Update Show</button>
                 </div>
             </div>
   

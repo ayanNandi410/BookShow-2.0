@@ -142,9 +142,9 @@ export default {
       v-if="toastShow"
       @close-toast="closeToast" />
 
-    <div class="container-fluid">
+    <div class="container container-fluid">
       <div class="row d-flex justify-content-center">
-        <div class="col-md-9 col-lg-6 col-xl-5">
+        <div class="col-md-9 col-lg-6 col-xl-5 mb-2">
           <div class="card" style="width: 25rem">
             <img
               src="@/assets/admin.jpg"
@@ -159,7 +159,7 @@ export default {
             </div>
           </div>
         </div>
-        <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
+        <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1 mt-2">
             <h3 class="alert alert-primary mb-4"> Enter Details</h3>
             <!-- Email input -->
             <div class="form-floating mb-4">

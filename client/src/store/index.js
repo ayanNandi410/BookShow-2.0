@@ -75,7 +75,7 @@ const mutations = {
     console.log(" venue saved")
   },
 
-    set_choosen_show(state, payload){
+  set_choosen_show(state, payload){
     state.show ={ id: payload.id, name: payload.name }; 
     console.log(" show saved")
   },

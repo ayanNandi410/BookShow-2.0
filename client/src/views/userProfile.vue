@@ -24,7 +24,7 @@ export default {
 
 <template>
     <div class="body vh-100">
-  <div class="container py-5 col-8">
+  <div class="container py-5 col-10">
     <div class="row">
       <div class="col-12 col-sm-8">
         <h1 class="display-5 fw-bold">User Profile</h1>

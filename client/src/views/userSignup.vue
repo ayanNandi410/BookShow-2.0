@@ -128,7 +128,7 @@ export default {
       @close-toast="closeToast" />
 
     <div class="container-fluid h-custom">
-      <div class="row d-flex justify-content-center h-100">
+      <div class="row d-flex justify-content-center h-100 g-2">
         <div class="col-12 col-sm-4">
           <div class="row">
             <h3 class="alert alert-warning mb-4">Sign Up to book shows!</h3>
@@ -141,14 +141,13 @@ export default {
             />
           </div>
         </div>
-        <div class="col-12 col-sm-5 offset-1">
+        <div class="col-12 col-sm-5 offset-1 mt-4">
           <form
-            class="mt-4"
             onsubmit="return false;"
           >
             <!-- Name input -->
             <div class="row mb-4">
-              <div class="col-12 col-sm-6">
+              <div class="col-12 col-sm-6 mb-2">
                 <div class="form-floating">
                   <input
                     type="text"

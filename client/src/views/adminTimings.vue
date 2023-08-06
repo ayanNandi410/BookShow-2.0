@@ -78,6 +78,7 @@ export default {
                     }
                     else {
                         this.type = "info";
+                        this.timings = [];
                         this.load_all_timings();
                         this.message = "Success"
                     }
@@ -172,24 +173,24 @@ export default {
                 <div class="container">
                     <form onsubmit="return false;">
                         <div class="row d-flex justify-content-center">
-                            <div class="col-12 col-sm-2">
+                            <div class="col-12 col-sm-3">
                                 <h4> Enter Range : </h4>
                             </div>
-                            <div class="col-12 col-sm-3">
+                            <div class="col-12 col-sm-4">
                                 <div class="input-group input-group-md">
                                     <span class="input-group-text">Start Date</span>
                                     <input type="date" class="form-control" name="startDate" v-model="startDate" 
                                     id="startDate" aria-label="date" required>
                                 </div>
                             </div>
-                            <div class="col-12 col-sm-3">
+                            <div class="col-12 col-sm-4">
                                 <div class="input-group input-group-md">
                                     <span class="input-group-text">End Date</span>
                                     <input type="date" class="form-control" name="endDate" v-model="endDate"
                                     id="endDate" aria-label="date" required>
                                 </div>
                             </div>
-                            <div class="col-12 col-sm-2">
+                            <div class="col-12 col-sm-1">
                                 <button @click="load_all_timings" class="btn btn-success">Search</button>
                             </div>
                         </div>

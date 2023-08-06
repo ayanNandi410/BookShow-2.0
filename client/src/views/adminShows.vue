@@ -28,6 +28,15 @@ export default {
   },
   methods: {
 
+    updatCurShow(name,id){
+      this.$store.commit('set_choosen_show', { id: id, name: name });
+      this.$router.push('/admin/show/update');
+    },
+
+    saveCurShow(id,name){
+      this.$store.commit('set_choosen_show', { id: id, name: name });
+    },
+
     closeToast() {
       this.toastShow = false;
     },
@@ -211,7 +220,9 @@ components: { AdminShowCard, ToastMsg },
         v-bind:tags="show.tags"
         v-bind:languages="show.languages"
         v-bind:timestamp="show.timestamp"
-        @deleteShow="deleteShowModal"/>
+        @deleteShow="deleteShowModal"
+        @saveShow="saveCurShow"
+        @updateShow="updatCurShow"/>
     </div>
 </div>
 </template>

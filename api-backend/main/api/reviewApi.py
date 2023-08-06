@@ -9,12 +9,8 @@ from sqlalchemy import desc, exc
 
 # Api to handle user reviews
 
-user_field = {
-    "name" : fields.String
-}
 
 review_output_fields = {
-    "user": fields.Nested(user_field),
     "user_email" : fields.String,
     "comment" : fields.String,
     "gRating" : fields.Integer,
@@ -22,7 +18,7 @@ review_output_fields = {
 }
 
 create_review_parser = reqparse.RequestParser()
-create_review_parser.add_argument('show_name')
+create_review_parser.add_argument('sid')
 create_review_parser.add_argument('user_email')
 create_review_parser.add_argument('rating',type=int, help="Rating must be an integer")
 create_review_parser.add_argument('comment')
@@ -31,9 +27,8 @@ class MovieReviewAPI(Resource):
 
     # get user reviews by show name
     @marshal_with(review_output_fields)
-    def get(self,sname):
-        print(sname)
-        show = db.session.query(Show).filter(Show.name == sname).first()
+    def get(self,sid):
+        show = db.session.query(Show).get(sid)
 
         if not show:
            raise NotFoundError(error_message='Show name not found',status_code=404,error_code="RW001") 
@@ -48,13 +43,13 @@ class MovieReviewAPI(Resource):
     # submit user review for a show
     def post(self):
         bk_args = create_review_parser.parse_args()
-        showName = bk_args.get('show_name',None)
+        sid = bk_args.get('sid',None)
         email = bk_args.get('user_email',None)
         rating = bk_args.get('rating',None)
         comment = bk_args.get('comment',None)
     
-        if showName is None or showName == '':
-            raise BusinessValidationError(status_code=400,error_code="RW003",error_message="Show Name is required")
+        if sid is None or sid == '':
+            raise BusinessValidationError(status_code=400,error_code="RW003",error_message="Show Id is required")
 
         if email is None or email == '':
             raise BusinessValidationError(status_code=400,error_code="RW004",error_message="Email is required")
@@ -69,7 +64,7 @@ class MovieReviewAPI(Resource):
             raise BusinessValidationError(status_code=400,error_code="RW007",error_message="Comment is required")
 
         
-        show = db.session.query(Show).filter(Show.name == showName).first()
+        show = db.session.query(Show).get(sid)
 
         if not show:
             raise BusinessValidationError(status_code=400,error_code="RW008",error_message="Show does not exist")
@@ -82,7 +77,7 @@ class MovieReviewAPI(Resource):
         timestamp = dt.now()
 
         try:
-            new_review = MovieReview(user_email=email,show_id=show.id,comment=comment,gRating=int(rating),timestamp=timestamp)
+            new_review = MovieReview(user_email=email,show_id=sid,comment=comment,gRating=int(rating),timestamp=timestamp)
             db.session.add(new_review)
             db.session.commit()
             return "Success", 200

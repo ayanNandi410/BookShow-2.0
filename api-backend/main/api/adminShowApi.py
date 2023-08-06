@@ -35,6 +35,7 @@ chooseShow_output_fields = {
 }
 
 create_show_parser = reqparse.RequestParser()
+create_show_parser.add_argument('id',type=int)
 create_show_parser.add_argument('name')
 create_show_parser.add_argument('rating',type=int)
 create_show_parser.add_argument('tags', type=str, action='append', location='json')
@@ -147,7 +148,9 @@ class ShowAPI(Resource):
             db.session.add(new_show)
             db.session.commit()
 
-            return "Success", 201
+            showId = db.session.query(Show).filter(Show.name == name,Show.timestamp==timestamp,Show.duration==duration).first()
+
+            return { "id": showId.id, "result": "Success" }, 201
         except exc.SQLAlchemyError as e:    # Some Database Error occured
             db.session.rollback()
             raise BusinessValidationError(status_code=500,error_code="SW017",error_message="Add Transaction failed. Try again")
@@ -157,6 +160,7 @@ class ShowAPI(Resource):
     @roles_accepted('admin')
     def put(self):
         vn_args = create_show_parser.parse_args()
+        id = vn_args.get('id',None)
         name = vn_args.get('name',None)
         tags = vn_args.get('tags',[])
         languages = vn_args.get('languages',[])
@@ -182,7 +186,7 @@ class ShowAPI(Resource):
             raise BusinessValidationError(status_code=400,error_code="SW007",error_message="Duration is required")
 
 
-        show = db.session.query(Show).filter(Show.name == name).first()
+        show = db.session.query(Show).get(id)
 
         if not show:
             raise BusinessValidationError(status_code=400,error_code="SW0015",error_message="Show does not exist")

@@ -1,7 +1,7 @@
 <script>
 import UserShowCard from '../components/UserShowCard.vue'
 import FilterModal from '../components/filterModal.vue'
-import { fetchPopularShows, deleteShow, fetchShowsByName, fetchCities, fetchVenuesByShow } from '../api';
+import { fetchPopularShows, fetchShowsByName, fetchCities, fetchVenuesByShow, fetchReviews } from '../api';
 import ToastMsg from '../components/toastMsg.vue'
 
 export default {
@@ -47,6 +47,29 @@ export default {
             id: id,
             name: name,
         };
+    },
+
+    getReviews(id,name){
+      fetchReviews(this.user.auth_token,id)
+      .then(async res =>  {
+          const data = await res.json()
+          console.log(data)
+          
+          if(!res.ok){
+            this.head_end = data.error_code;
+            this.message = data.error_message;
+            this.venuesForShow = [];
+          }
+          else{
+            this.reviews = data;
+          }
+          
+      })
+      .catch(e => {
+          this.message = e.data;
+          console.log("Fetch Error: "+e)
+          }
+      );   
     },
 
     getVenuesForShow(city){
@@ -196,6 +219,23 @@ components: { UserShowCard , ToastMsg, FilterModal },
         </div>
         <div class="modal-body" id="reviewsModalBody">
             <ul class="list-group" id="reviews">
+                <li class="list-group-item justify-content-between align-items-start mt-3" v-for="review in reviews">
+                  <div class="ms-2 me-auto">
+                  <div class="fw-bold">{{ review.name }}</div>
+                  {{ review.comment }}<br/><br/>
+                  <p class="text-muted">By {{ review.user_email }}, on {{ review.timestamp.substring(4,16)}}</p>
+                  <img
+                    src="@/assets/star-full.svg"
+                    class="filter-orange" width="20"
+                    v-for="(n, index) in parseInt(review.gRating/2)"
+                />
+                <img
+                    src="@/assets/star-empty.svg"
+                    class="filter-orange" width="20"
+                    v-for="(n, index) in 5 - parseInt(review.gRating/2)"
+                />
+                  </div>
+                </li>
             </ul>
         </div>
         <div class="modal-footer">

@@ -2,7 +2,7 @@ from flask_restful import Resource, fields, marshal_with, reqparse, inputs
 import json
 from ..models import Show, Venue, Allocation
 from datetime import date, timedelta
-from flask import request
+from flask import request, jsonify
 from sqlalchemy import desc, exc
 from main.db import db
 from main.validation import NotFoundError, BusinessValidationError
@@ -34,6 +34,8 @@ userallocation_output_fields = {
 }
 
 userSevenD_entry = {
+    "id": fields.Integer,
+    "date": fields.String,
     "time": fields.String,
     "avSeats": fields.Integer,
     "price": fields.Fixed(decimals=2)
@@ -47,11 +49,11 @@ userSevenD_output_fields = {
 
 # Parser details for post and put request
 create_allocation_parser = reqparse.RequestParser()
-create_allocation_parser.add_argument('venue_id',type=int)
-create_allocation_parser.add_argument('show_name')
-create_allocation_parser.add_argument('releaseDate')
-create_allocation_parser.add_argument('releaseTime')
-create_allocation_parser.add_argument('allocSeats',type=int, help="Seats must be an integer")
+create_allocation_parser.add_argument('venueId',type=int)
+create_allocation_parser.add_argument('showId',type=int)
+create_allocation_parser.add_argument('date')
+create_allocation_parser.add_argument('time')
+create_allocation_parser.add_argument('seats',type=int, help="Seats must be an integer")
 create_allocation_parser.add_argument('price', type=float, help="Not a valid number or price")
 
 
@@ -75,17 +77,17 @@ class AllocationAPI(Resource):
     # create a new allocation
     def post(self):
         vn_args = create_allocation_parser.parse_args()
-        venueId = vn_args.get('venue_id',None)
-        showName = vn_args.get('show_name',None)
-        rlDate = vn_args.get('releaseDate',None)
-        rlTime = vn_args.get('releaseTime',None)
-        allcSeats = vn_args.get('allocSeats',None)
+        venueId = vn_args.get('venueId',None)
+        showId = vn_args.get('showId',None)
+        rlDate = vn_args.get('date',None)
+        rlTime = vn_args.get('time',None)
+        allcSeats = vn_args.get('seats',None)
         ticketPrice = vn_args.get('price',None)
 
         if venueId is None or venueId == '':
             raise BusinessValidationError(status_code=400,error_code="AL001",error_message="Venue Id is required")
     
-        if showName is None or showName == '':
+        if showId is None or showId == '':
             raise BusinessValidationError(status_code=400,error_code="AL002",error_message="Show Name is required")
 
         if float(ticketPrice) < 0.0:
@@ -108,7 +110,7 @@ class AllocationAPI(Resource):
             raise BusinessValidationError(status_code=400,error_code="AL007",error_message="Invalid seat count")
 
         
-        show = db.session.query(Show).filter(Show.name == showName).first()
+        show = db.session.query(Show).get(showId)
 
         if not show:
             raise BusinessValidationError(status_code=400,error_code="AL008",error_message="Show does not exist")
@@ -133,9 +135,7 @@ class AllocationAPI(Resource):
             raise BusinessValidationError(status_code=400,error_code="AL0015",error_message="Timeslot already allocated")
 
 
-        show_id = db.session.query(Show.id).filter(Show.name == showName).first()
-
-        new_allocation = Allocation(show_id=show_id.id,venue_id=venueId,timeslot=timeslot,totSeats=allcSeats,avSeats=allcSeats,price=ticketPrice)
+        new_allocation = Allocation(show_id=showId,venue_id=venueId,timeslot=timeslot,totSeats=allcSeats,avSeats=allcSeats,price=ticketPrice)
         
         db.session.add(new_allocation)
 
@@ -145,17 +145,17 @@ class AllocationAPI(Resource):
     # update existing allocation
     def put(self,aid):
         vn_args = create_allocation_parser.parse_args()
-        venueId = vn_args.get('venue_id',None)
-        showName = vn_args.get('show_name',None)
-        rlDate = vn_args.get('releaseDate',None)
-        rlTime = vn_args.get('releaseTime',None)
-        allcSeats = vn_args.get('allocSeats',None)
+        venueId = vn_args.get('venueId',None)
+        showId = vn_args.get('showId',None)
+        rlDate = vn_args.get('date',None)
+        rlTime = vn_args.get('time',None)
+        allcSeats = vn_args.get('seats',None)
         ticketPrice = vn_args.get('price',None)
 
         if venueId is None or venueId == '':
             raise BusinessValidationError(status_code=400,error_code="AL001",error_message="Venue Id is required")
     
-        if showName is None or showName == '':
+        if showId is None or showId == '':
             raise BusinessValidationError(status_code=400,error_code="AL002",error_message="Show Name is required")
 
         if float(ticketPrice) < 0.0:
@@ -178,7 +178,7 @@ class AllocationAPI(Resource):
             raise BusinessValidationError(status_code=400,error_code="AL007",error_message="Invalid seat count")
 
         
-        show = db.session.query(Show).filter(Show.name == showName).first()
+        show = db.session.query(Show).get(showId)
 
         if not show:
             raise BusinessValidationError(status_code=400,error_code="AL008",error_message="Show does not exist")
@@ -197,12 +197,9 @@ class AllocationAPI(Resource):
 
         timeslot = datetime.combine(rDate,rTime)
 
-        showItem = db.session.query(Show.id).filter(Show.name == showName).first()
-        show_id = showItem.id
-
         curAllocation = db.session.query(Allocation).filter(Allocation.id == aid).first()
         curAllocation.venue_id = venueId
-        curAllocation.show_id = show_id
+        curAllocation.show_id = showId
         curAllocation.timeslot = timeslot
         curAllocation.totSeats = allcSeats
         curAllocation.avSeats = allcSeats
@@ -272,6 +269,8 @@ class AllocationForSevenDaysAPI(Resource):
         .filter(Allocation.venue == venue,Allocation.show == show,Allocation.timeslot.between(sDate,eDate))\
         .order_by(Allocation.timeslot).limit(50).all()
 
+        print(timeslotList)
+
         if not timeslotList:
             raise NotFoundError(error_message='No timeslots found',status_code=404,error_code="AL011")
         else:
@@ -280,12 +279,14 @@ class AllocationForSevenDaysAPI(Resource):
 
             for item in timeslotList:
                 index = ( item.timeslot - dt.today()).days
-                print(index)
-                slots[index].append({ 'date': item.timeslot.strftime("%Y-%m-%d"),
-                                     'time': item.timeslot.strftime("%I:%M %p"), 
+    
+                slots[index].append({'time': item.timeslot.strftime("%I:%M %p"), 
+                                     'date': item.timeslot.strftime("%d %b %Y"),
                                      'avSeats': item.avSeats, 
-                                     'price': item.price })
+                                     'price': str(item.price),
+                                      'id': item.id })
 
+            print(slots)
             dateList = []
 
             curdate = dt.today()
