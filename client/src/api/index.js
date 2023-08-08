@@ -180,6 +180,17 @@ export function fetchPopularShows(token) {
   
 }
 
+
+export function filterShows(token,details) {
+  const requestOptions = {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "Authentication-Token": token },
+    body: JSON.stringify(details)
+  };
+    return fetch(`${API_URL}filterShow`, requestOptions)
+  
+}
+
 export function fetchShowsByName(token,name) {
   const requestOptions = {
     method: "GET",
@@ -260,5 +271,15 @@ export function fetchReviews(token,sid) {
     headers: { "Content-Type": "application/json", "Authentication-Token": token },
   };
     return fetch(`${API_URL}review/${sid}`, requestOptions)
+  
+}
+
+export function addReview(token,details) {
+  const requestOptions = {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "Authentication-Token": token },
+    body: JSON.stringify(details)
+  };
+    return fetch(`${API_URL}review`, requestOptions)
   
 }

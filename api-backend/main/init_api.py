@@ -1,6 +1,5 @@
 # Api initialization
 from flask_restful import Resource, Api
-from .api.auth import RegisterAPI
 from .api.test import TestAPI
 from .api.cityApi import GetAllCitiesAPI
 from .api.adminVenueApi import AdminVenueListByCityAPI, AdminVenueAPI
@@ -8,6 +7,7 @@ from .api.adminShowApi import PopularShowsApi, ShowAPI, ListShowByVenueApi, Show
 from .api.userVenueApi import UserVenueListByCityAPI, GetVenueByNameApi, UserVenueAPI, VenueListByShowApi
 from .api.allocationApi import AllocationBetweenDatesAPI, AllocationAPI, AllocationForSevenDaysAPI
 from .api.exportAdminShow import ExportShowAPI, DownloadCSVAPI
+from .api.userShowApi import FilterShowsApi
 
 from .api.bookingApi import BookTicketAPI
 from .api.reviewApi import MovieReviewAPI
@@ -17,7 +17,6 @@ def getConfiguredApi(app):
     apiV = Api(app)
 
     # Common
-    apiV.add_resource(RegisterAPI,"/api/register",endpoint="/register")
     apiV.add_resource(TestAPI,"/api/test",endpoint="/test")
     apiV.add_resource(GetAllCitiesAPI,"/api/city/all",endpoint="/city/all")
     
@@ -28,6 +27,7 @@ def getConfiguredApi(app):
 
     # show
     apiV.add_resource(ListShowByVenueApi,"/api/show/byVenue/<string:vid>",endpoint="/show/byVenue")
+    apiV.add_resource(FilterShowsApi,"/api/filterShow",endpoint="/filterShow")
 
     # for Admin
     apiV.add_resource(AdminVenueListByCityAPI,"/api/venuesforAdmin/byCity/<string:city>",endpoint="/venuesforAdmin/byCity")

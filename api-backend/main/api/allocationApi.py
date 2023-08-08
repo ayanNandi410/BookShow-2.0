@@ -214,7 +214,7 @@ class AllocationAPI(Resource):
     def delete(self,aid):
 
         try:
-            delAlloc = db.session.query(Allocation).filter(Allocation.id == aid).first()
+            delAlloc = db.session.query(Allocation).get(aid)
             db.session.delete(delAlloc)
             db.session.commit()
 

@@ -33,8 +33,8 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(255), nullable=False)
     first_name = db.Column(db.String(255))
     last_name = db.Column(db.String(255))
-    last_login_at = db.Column(db.DateTime())
-    current_login_at = db.Column(db.DateTime())
+    last_login_at = db.Column(db.DateTime(timezone=True))
+    current_login_at = db.Column(db.DateTime(timezone=True))
     last_login_ip = db.Column(db.String(100))
     current_login_ip = db.Column(db.String(100))
     login_count = db.Column(db.Integer)
@@ -165,7 +165,7 @@ class MovieReview(db.Model):
     comment = db.Column(db.String(220),nullable=False)
     gRating = db.Column(db.Integer,nullable=False)
     timestamp = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
-
+    
     #user =  db.relationship('User',lazy='subquery', viewonly=True)
 
     def __repr__(self):

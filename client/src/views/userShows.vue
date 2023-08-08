@@ -1,7 +1,6 @@
 <script>
 import UserShowCard from '../components/UserShowCard.vue'
-import FilterModal from '../components/filterModal.vue'
-import { fetchPopularShows, fetchShowsByName, fetchCities, fetchVenuesByShow, fetchReviews } from '../api';
+import { fetchPopularShows, fetchShowsByName, fetchCities, fetchVenuesByShow, fetchReviews, filterShows } from '../api';
 import ToastMsg from '../components/toastMsg.vue'
 
 export default {
@@ -23,6 +22,12 @@ export default {
       type: "",
       searched: false,
       showName: '',
+      filterMd: {
+        rating: null,
+        tags: [],
+        languages: [],
+        runningShows: "",
+      },
     };
   },
   methods: {
@@ -173,7 +178,46 @@ export default {
           console.log("Fetch Error: "+e)
           }
       ); 
+  },
+
+  filterCurShows(){
+    this.type = "error";
+    this.toastShow = true;
+    this.header = "Filter Show";
+    this.loading = true;
+
+    const details = {
+      runningShows: this.filterMd.runningShows,
+      tags: this.filterMd.tags,
+      languages: this.filterMd.languages,
+      rating: this.filterMd.rating,
+    }
+
+    filterShows(this.user.auth_token,details)
+      .then(async res =>  {
+          const data = await res.json()
+          console.log(data)
+
+          if(!res.ok){
+            this.head_end = data.error_code;
+            this.message = data.error_message;
+            this.loading = false;
+          }
+          else{
+            this.toastShow = false;
+            this.shows = data;
+            this.searched = true;
+            this.loading = false;
+          }
+          
+      })
+      .catch(e => {
+        this.message = e.data;
+          console.log("Fetch Error: "+e)
+          }
+      ); 
   }
+
 },
 
 computed: {
@@ -182,7 +226,7 @@ computed: {
     },
 },
 
-components: { UserShowCard , ToastMsg, FilterModal },
+components: { UserShowCard , ToastMsg },
 
   beforeMount() {
     this.fetchPopShows();
@@ -209,6 +253,132 @@ components: { UserShowCard , ToastMsg, FilterModal },
     @close-toast="closeToast" />
 
 
+    <!-- Filter Modal -->
+    <div class="modal fade" id="filterModal" data-bs-backdrop="static"
+    data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h1 class="modal-title fs-5" id="filterModalLabel">Filter Shows</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form onsubmit="return false;">
+
+            <div class="modal-body" id="filterModalBody">
+            <div class="container">
+
+                <div class="row mb-3">
+                <div class="col-12">
+                    <div class="input-group input-group-md">
+                        <span class="input-group-text">Tags</span>
+                        <div class="form-control">
+                            <div class="form-check form-check-inline">
+                                <input type="checkbox" class="form-check-input" v-model="filterMd.tags"
+                                id="TagAction" name="tags" value="Action">
+                                <label class="form-check-label" for="Action"> Action</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input type="checkbox" class="form-check-input" v-model="filterMd.tags"
+                                id="TagThriller" name="tags" value="Thriller">
+                                <label for="Thriller" class="form-check-label"> Thriller</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input type="checkbox" class="form-check-input" v-model="filterMd.tags"
+                                id="TagComedy" name="tags" value="Comedy">
+                                <label for="Comedy" class="form-check-label"> Comedy</label>    
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input type="checkbox" class="form-check-input" v-model="filterMd.tags"
+                                id="TagHorror" name="tags" value="Horror">
+                                <label class="form-check-label" for="Horror"> Horror</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input type="checkbox" class="form-check-input" v-model="filterMd.tags"
+                                id="TagMystery" name="tags" value="Mystery">
+                                <label for="Mystery" class="form-check-label"> Mystery</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input type="checkbox" class="form-check-input" v-model="filterMd.tags"
+                                id="TagFantasy" name="tags" value="Fantasy">
+                                <label for="Fantasy" class="form-check-label"> Fantasy</label>    
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input type="checkbox" class="form-check-input" v-model="filterMd.tags"
+                                id="TagDrama" name="tags" value="Drama">
+                                <label for="Drama" class="form-check-label"> Drama</label>    
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="tagCheck" class="invalid-feedback">&emsp;One tag must be selected</div>
+                </div>
+
+                <div class="row mb-3">
+                <div class="col-12">
+                    <div class="input-group input-group-md">
+                        <span class="input-group-text">Languages</span>
+                        <div class="form-control">
+                            <div class="form-check form-check-inline">
+                                <input type="checkbox" class="form-check-input" v-model="filterMd.languages"
+                                id="LangEnglish" name="languages" value="English">
+                                <label class="form-check-label" for="English"> English</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input type="checkbox" class="form-check-input" v-model="filterMd.languages" 
+                                id="LangHindi" name="languages" value="Hindi">
+                                <label for="Hindi" class="form-check-label"> Hindi</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input type="checkbox" class="form-check-input" v-model="filterMd.languages" 
+                                id="LangBengali" name="languages" value="Bengali">
+                                <label for="Bengali" class="form-check-label"> Bengali</label>    
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input type="checkbox" class="form-check-input" v-model="filterMd.languages" 
+                                id="LangTamil" name="languages" value="Tamil">
+                                <label class="form-check-label" for="Tamil"> Tamil</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input type="checkbox" class="form-check-input" v-model="filterMd.languages" 
+                                id="LangTelegu" name="languages" value="Telegu">
+                                <label for="Telegu" class="form-check-label"> Telegu</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input type="checkbox" class="form-check-input" v-model="filterMd.languages" 
+                                id="LangMalayalam" name="languages" value="Malayalam">
+                                <label for="Malayalam" class="form-check-label"> Malayalam</label>    
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="langCheck" class="invalid-feedback">&emsp;One Language must be selected</div>
+            </div>
+
+            <div class="col-12 col-sm-8 mb-3">
+                <label for="userRating" class="form-label">Rating (greater than) <span id="ratingValue" class="badge bg-primary text-white" on="changeColour();">5</span></label>
+                <input type="range" class="form-range" min="0" max="10" step="1" v-model="filterMd.rating"
+                name="userRating" id="userRating" onchange="updateRating(this.value);" required>
+            </div>
+            
+            <div class="col-12 mb-3">
+                <label for="runningShows" class="form-radio-label">Display only running shows? &emsp14;</label>
+                <input type="radio" class="form-radio-input" name="runShows" value="yes" v-model="filterMd.runningShows" checked> Yes
+                &emsp14;<input type="radio" class="form-radio-input" name="runShows" v-model="filterMd.runningShows" value="no"> No
+            </div>
+            <br/>
+
+            </div>
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button id="filterBt" class="btn btn-primary" @click="filterCurShows">Filter</button>
+            </div>
+            </form>
+        </div>
+        </div>
+    </div>
+
+
         <!-- Reviews Modal -->
     <div class="modal fade" id="reviewsModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable">
@@ -218,6 +388,9 @@ components: { UserShowCard , ToastMsg, FilterModal },
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body" id="reviewsModalBody">
+            <div  v-if="reviews.length==0">
+              <h2 class=" badge bg-warning text-dark">No reviews yet</h2>
+            </div>
             <ul class="list-group" id="reviews">
                 <li class="list-group-item justify-content-between align-items-start mt-3" v-for="review in reviews">
                   <div class="ms-2 me-auto">
@@ -244,8 +417,6 @@ components: { UserShowCard , ToastMsg, FilterModal },
         </div>
     </div>
     </div>
-
-    <FilterModal />
 
     <div class="offcanvas offcanvas-bottom" tabindex="-1" id="chVenueCanvas" aria-labelledby="offcanvasBottomLabel" 
         style="min-height: 90%;">

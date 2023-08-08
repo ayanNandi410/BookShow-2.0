@@ -17,24 +17,25 @@ def alert_month_everyUser(sender, **kwargs):
     )
 
 
-def format_report(temp_file,data={}):
+def format_report(temp_file,bookings,reviews,user):
     with open(temp_file) as file:
         template = Template(file.read())
-        return template.render(data=data)
+        return template.render(bookings=bookings,reviews=reviews,user=user)
     
-def create_report(type,data):
-    message = format_report('report_template.html', data=data)
+def create_report(bookings,reviews,user,type):
+    message = format_report('templates/report_template.html',bookings,reviews,user)
+    print(message)
     html = HTML(string=message)
-    file_name = str(uuid.uuid4())+'.pdf'
+    file_name = str(user['name']+"_"+datetime.today().strftime("%d %b %Y"))+'.pdf'
     print(file_name)
 
     if type=='pdf':
-        html.write(target=file_name)
+        html.write_pdf(target="files/"+file_name)
     else:
         pass
 
 @celeryObj.task()
-def MontlyEnmtReportJob(type='html'):
+def MontlyEnmtReportJob(type='pdf'):
     print("Started JOB -> Montly Entertainment Job")
     role = db.session.query(Role).filter(Role.name == 'user').first()
     user_list = role.users
@@ -45,6 +46,10 @@ def MontlyEnmtReportJob(type='html'):
     for user in user_list:
         bookings = db.session.query(BookTicket).filter(BookTicket.user_email == user.email, BookTicket.timestamp > startMonth).all()
         reviews = db.session.query(MovieReview).filter(MovieReview.user_email == user.email, MovieReview.timestamp > startMonth).all()
-
-
+        curUser = {
+            "name": user.getName(),
+            "email": user.email,
+        }
+        print(bookings)
+        create_report(bookings,reviews,curUser,type)
         #send_email(address=user.email, subject="Hurry! Movies coming up in your local theatres",message="Hey "+ firstName +",\n\nYou haven't checked out the recent releases! Seats booking fast! Go to BookShow and book your favorite show now.")

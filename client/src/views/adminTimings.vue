@@ -7,6 +7,7 @@ export default {
     name: "adminTimings",
     data() {
         return {
+            user : this.$store.getters.fetch_user_details,
             timings: [],
             startDate: "",
             endDate: "",
@@ -30,7 +31,7 @@ export default {
 
         load_all_timings() {
             this.loading = true;
-            fetchTimings({
+            fetchTimings(this.user.auth_token,{
                 sid: this.show.id,
                 vid: this.venue.id,
                 startDate: this.startDate,
@@ -66,7 +67,7 @@ export default {
             this.toastShow = true;
             this.header = "Delete Timing";
 
-            deleteTiming(this.timingChoice.id)
+            deleteTiming(this.user.auth_token,this.timingChoice.id)
                 .then(async res => {
                     const data = await res.json()
                     console.log(data)
@@ -109,6 +110,11 @@ export default {
 
     beforeMount() {
         //this.load_all_cities();
+    },
+
+    onMounted(){
+    this.$store.commit('set_user_details_from_local');
+    this.user = this.$store.getters.fetch_user_details;
     }
 
 };
@@ -197,13 +203,14 @@ export default {
                     </form>
                 </div>
 
-                <div v-if="loading">
+                <hr/><br/><br/>
+
+                <div v-if="loading" style="margin: auto;">
                     <div class="spinner-border spinner-border-lg text-primary" role="status">
                         <span class="visually-hidden">Loading...</span>
                     </div>
                 </div>
 
-                <hr/><br/><br/>
                 <!-- {% if emptyAlloc is defined %} -->
                 <div class="d-flex justify-content-center" v-if="timings.length==0">
                   <h2 class="alert alert-primary text-center" style="width: 60%;">No slots alloted</h2>

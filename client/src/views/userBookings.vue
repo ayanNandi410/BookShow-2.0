@@ -1,5 +1,6 @@
 <script>
-import { fetchBooking } from '../api';
+import ToastMsg from '../components/toastMsg.vue'
+import { fetchBooking, addReview } from '../api';
 
 export default {
   name: "userBookings",
@@ -17,15 +18,53 @@ export default {
         head_end: "",
         message: "",
         type: "",
+        toastShow: false,
     };
   },
   methods: {
 
-    setReview(booking){
-      this.chosenBooking = booking;
-      this.showName = this.chosenBooking.show[0].name;
-      this.comment = "";
+    closeToast(){
+            this.toastShow = false;
     },
+
+      setReview(booking){
+        this.chosenBooking = booking;
+        this.showId = booking.show[0].id;
+        this.showName = this.chosenBooking.show[0].name;
+        this.comment = "";
+      },
+
+      saveReview(){
+        this.toastShow = true;
+        const review = {
+          sid: this.showId,
+          user_email: this.user.email,
+          rating: this.rating,
+          comment: this.comment,
+        }
+
+        addReview(this.user.auth_token,review)
+          .then(async res => {
+            const data = await res.json()
+            this.header = "Save Review";
+            this.type = 'error';
+
+            if (!res.ok) {
+              this.message = data.error_message;
+              this.head_end = data.error_code;
+
+            }
+            else {
+              this.message = "Successfully saved";
+              this.type = 'info';
+            }
+
+          })
+          .catch(e => {
+            this.message = e.data;
+            console.log("Fetch Error: " + e)
+          });
+      },
 
       fetchAllBookings() {
       this.loading = true;
@@ -83,56 +122,65 @@ export default {
     this.fetchAllBookings();
   },
 
-  components: { },
+  components: { ToastMsg },
 };
 </script>
 
 <template>
-    
-<!-- Review Modal -->
-<div class="modal fade" id="reviewModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="reviewModalTitle">Add Review</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body" id="reviewModalBody">
-            <input type="number" id="showId" name="showId" style="display: none;">
-            <div class="col-12 mb-4">
-              <div class="form-floating">
-                <input type="text" class="form-control" v-model="showName"
-                      name="showName" id="showName" readonly/>
-                  <label for="showName">Show Name</label>
-              </div>
-            </div>
-            <div class="col-12 col-sm-8">
-              <label for="userRating" class="form-label">Rating : <span id="ratingValue" class="badge bg-primary text-white" on="changeColour();">5</span></label>
-              <input type="range" class="form-range" min="0" max="10" step="1" v-model="rating"
-              name="userRating" id="userRating" @change="updateRating" required>
-          </div><br/>
-          <div class="col-12">
-              <div class="form-floating">
-                  <textarea class="form-control" name="userComment" id="userComment" v-model="comment"
-                  placeholder="Leave a comment here(within 200 characters)" rows="10" required></textarea>
-                  <label for="userComment">Comments</label>
-              </div>
-          </div>
 
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button id="submitReview" class="btn btn-primary" data-bs-dismiss="modal">Submit Review</button>
+<div class="container">
+
+  <ToastMsg 
+        v-bind:header="header" 
+        v-bind:head_end="head_end" 
+        v-bind:message="message" 
+        v-bind:type="type" 
+        v-if="toastShow"
+        @close-toast="closeToast" />
+    
+  <!-- Review Modal -->
+  <div class="modal fade" id="reviewModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="reviewModalTitle">Add Review</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body" id="reviewModalBody">
+              <input type="number" id="showId" name="showId" style="display: none;">
+              <div class="col-12 mb-4">
+                <div class="form-floating">
+                  <input type="text" class="form-control" v-model="showName"
+                        name="showName" id="showName" readonly/>
+                    <label for="showName">Show Name</label>
+                </div>
+              </div>
+              <div class="col-12 col-sm-8">
+                <label for="userRating" class="form-label">Rating : <span id="ratingValue" class="badge bg-primary text-white" on="changeColour();">5</span></label>
+                <input type="range" class="form-range" min="0" max="10" step="1" v-model="rating"
+                name="userRating" id="userRating" @change="updateRating" required>
+            </div><br/>
+            <div class="col-12">
+                <div class="form-floating">
+                    <textarea class="form-control" name="userComment" id="userComment" v-model="comment"
+                    placeholder="Leave a comment here(within 200 characters)" rows="10" required></textarea>
+                    <label for="userComment">Comments</label>
+                </div>
+            </div>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button id="submitReview" class="btn btn-primary" @click="saveReview" data-bs-dismiss="modal">Submit Review</button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-<div class="container body">
     <h2>Bookings</h2><hr/>
     <br/>
 
-    <div class="vh-100">  
+    <div class="mb-4">  
 
       <div style="margin: 5% 50%;" v-if="loading">
         <div class="spinner-border spinner-border-lg text-primary" role="status">

@@ -2,7 +2,7 @@ from flask import render_template
 from flask_security import Security, SQLAlchemySessionUserDatastore, auth_required, roles_accepted, hash_password, current_user
 from main.db import db
 from main.models import User
-from .tasks.alertJob import reminder
+from .tasks.exportUserDetails import MontlyEnmtReportJob
 
 def setup_controllers(app):
     
@@ -39,7 +39,7 @@ def setup_controllers(app):
         
     @app.route('/test/<vid>')
     def test(vid):
-        job = reminder.delay()
+        job = MontlyEnmtReportJob.delay()
         return "success"
         
 
