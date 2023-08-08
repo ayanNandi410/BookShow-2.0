@@ -44,7 +44,7 @@ const props = defineProps({
             data-bs-toggle="modal" data-bs-target="#deleteModal" 
             @click="$emit('deleteVenue',this.name,this.id)">Delete</a>&emsp14;
 
-            <a href="#" class="btn btn-sm btn-warning">Update</a><br/>
+            <router-link to="/admin/venue/update"><a class="btn btn-sm btn-warning" @click="$emit('updateVenue',props.name,props.id)">Update</a></router-link><br/>
           </div>
         </div>
       </div>

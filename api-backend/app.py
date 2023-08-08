@@ -9,6 +9,7 @@ from main.workers import celeryObj, ContextTask
 import os
 import requests, secrets, string
 from flask_cors import CORS
+from flask_caching import Cache
 from main.models import User, Role, RolesUsers
 from main.testData import addData
 from main.db import db
@@ -69,16 +70,16 @@ def create_app():
     )
 
     celery.Task = ContextTask
-
     app.config.enable_utc = True
-
     app.app_context().push()
 
+    cache = Cache(app)
+    app.app_context().push()
 
-    return app, api, celery
+    return app, api, celery, cache
 
 
-app, api, celery = create_app()
+app, api, celery, cache = create_app()
 
 if __name__ == '__main__':
     app.run("127.0.0.1", debug=True)

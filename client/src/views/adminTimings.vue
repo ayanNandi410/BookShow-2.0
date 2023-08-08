@@ -29,6 +29,12 @@ export default {
             this.toastShow = false;
         },
 
+        updateTiming(timing) {
+            this.$store.commit('set_choosen_venue', { id: this.venue.id, name: this.venue.name });
+            this.$store.commit('set_choosen_show', { id: this.show.id, name: this.show.name });
+            this.$store.commit('set_choosen_timing', { id: timing.id });
+        },
+
         load_all_timings() {
             this.loading = true;
             fetchTimings(this.user.auth_token,{
@@ -226,7 +232,7 @@ export default {
                         </div>
                         <div class="d-flex w-100 justify-content-between mb-3">
                             <h5 class="mb-1">Time : {{ timing.time }}</h5>
-                            <a href="/admin/allocation/update?aid={{ alloc['id'] }}&vid={{ alloc['venue_id'] }}" class="btn btn-sm btn-warning" >Update Timing</a>
+                            <router-link to="/admin/timing/update"><a class="btn btn-sm btn-warning" @click="updateTiming(timing)">Update Timing</a></router-link>
                         </div>
                         <div class="d-flex w-100 justify-content-between">
                             <p class="mb-1">Seats remaining : <b>{{ timing.avSeats }} out of {{ timing.totSeats }} </b></p>

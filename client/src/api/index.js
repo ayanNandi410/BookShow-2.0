@@ -228,6 +228,14 @@ export function addTiming(token,timing) {
   return fetch(`${API_URL}timing`, requestOptions)
 }
 
+export function updateTiming(token,timing,id) {
+  const requestOptions = {
+    method: "PUT",
+    headers: { "Content-Type": "application/json", "Authentication-Token": token },
+    body: JSON.stringify(timing),
+  };
+  return fetch(`${API_URL}timing/${id}`, requestOptions)
+}
 
 export function deleteTiming(token,id) {
   const requestOptions = {

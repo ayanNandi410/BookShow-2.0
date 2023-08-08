@@ -27,11 +27,18 @@ export default {
     },
 
     updateCurVenue(){
+    this.header = "Update Venue";
+    this.type = "error";
 
-    this.header = "Update Venue"
-    this.type = "error"
+    const CurVenue = { 
+        id: this.venue.id,
+        name: this.name, 
+        location:this.location, 
+        city:this.city, 
+        capacity:this.capacity, 
+        description: this.desc
+    }
 
-    const CurVenue = { id: this.venue.id,name: this.name, location:this.location, city:this.city, capacity:this.capacity, description: this.desc}
     updateVenue(this.user.auth_token,CurVenue)
       .then(async res =>  {
           const data = await res.json()
@@ -59,6 +66,7 @@ export default {
         let result = true;
 
         let capacity = document.getElementById('venueCapacity');
+        
         if(capacity.value < 40)
         {
             document.getElementById('capCheck').style.display = "block";
@@ -83,7 +91,7 @@ export default {
             return result;
         }
         else{
-            this.addNewVenue();
+            this.updateCurVenue();
         }
     },
 

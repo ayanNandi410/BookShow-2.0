@@ -28,9 +28,8 @@ export default {
   },
   methods: {
 
-    updatCurShow(name,id){
+    updateCurShow(name,id){
       this.$store.commit('set_choosen_show', { id: id, name: name });
-      this.$router.push('/admin/show/update');
     },
 
     saveCurShow(id,name){
@@ -222,7 +221,7 @@ components: { AdminShowCard, ToastMsg },
         v-bind:timestamp="show.timestamp"
         @deleteShow="deleteShowModal"
         @saveShow="saveCurShow"
-        @updateShow="updatCurShow"/>
+        @updateShow="updateCurShow"/>
     </div>
 </div>
 </template>

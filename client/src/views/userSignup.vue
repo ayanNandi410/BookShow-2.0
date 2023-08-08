@@ -249,7 +249,7 @@ export default {
               </button>
               <p class="small fw-bold mt-2 pt-1 mb-0">
                 Already have an account?
-                <a href="/userLogin" class="link-danger">Login</a>
+                <router-link to="/user/login" class="link-danger">Login</router-link>
               </p>
             </div>
           </form>

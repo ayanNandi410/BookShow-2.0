@@ -1,7 +1,5 @@
 import Vuex from 'vuex'
 
-import { fetch_auth_token } from '../api'
-
 //Vue.use(Vuex)
 
 const state = {
@@ -15,6 +13,7 @@ const state = {
   user_type: "",
   venue: {},
   show: {},
+  timing: {},
   notifications: [],
 }
 
@@ -78,6 +77,11 @@ const mutations = {
   set_choosen_show(state, payload){
     state.show ={ id: payload.id, name: payload.name }; 
     console.log(" show saved")
+  },
+
+  set_choosen_timing(state, payload){
+    state.timing ={ id: payload.id }; 
+    console.log(" timing saved")
   },
 
   set_notif(state, payload){

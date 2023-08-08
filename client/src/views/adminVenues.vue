@@ -23,6 +23,11 @@ export default {
   },
   methods: {
 
+    updatCurVenue(name, id) {
+      this.$store.commit('set_choosen_venue', { id: id, name: name });
+      this.$router.push('/admin/venue/update');
+    },
+
     closeToast() {
       this.toastShow = false;
     },
@@ -308,6 +313,7 @@ components: { AdminVenueCard, ToastMsg },
         v-bind:capacity=venue.capacity 
         v-bind:location=venue.location 
         v-bind:timestamp="venue.timestamp"
+        @updateVenue="updatCurVenue"
         @deleteVenue="deleteVenueModal"
         @exportVeueDet="exportVenue"
         @displayShows="displayShows"/>

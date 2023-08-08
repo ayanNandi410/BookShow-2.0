@@ -50,14 +50,14 @@ const props = defineProps({
                     v-for="lng in props.languages"
                     >{{ lng.name }}</span
                 >
-                <span class="badge bg-info text-white">{{ props.duration }}</span>&nbsp;
+                <span class="badge bg-info text-dark">{{ props.duration }}</span>&nbsp;
               </div>
             </div>
             <div class="card-footer text-muted">
                 <p><img src="@/assets/calendar.svg"/> {{ props.timestamp.slice(0,22) }}</p>
               <a href="#" class="btn btn-sm btn-danger" data-bs-toggle="modal"
               @click="$emit('deleteShow',props.name,props.id)" data-bs-target="#deleteModal">Delete</a>&emsp14;
-              <a href="#" class="btn btn-sm btn-warning" @click="$emit('updateShow',props.name,props.id)">Update</a><br/>
+              <router-link to="/admin/show/update"><a href="#" class="btn btn-sm btn-warning" @click="$emit('updateShow', props.name, props.id)">Update</a></router-link><br/>
               <router-link to="/admin/allocateTimings" ><button class="btn btn-sm btn-success mt-2" @click="$emit('saveShow',props.id,props.name)">Add Timing</button></router-link>
             </div>
           </div>

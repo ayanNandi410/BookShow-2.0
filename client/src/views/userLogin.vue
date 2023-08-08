@@ -172,7 +172,7 @@ export default {
               </p>
               <p class="small fw-bold mt-2 pt-1 mb-0">
                 Don't have an account?
-                <a href="/userSignup" class="link-danger">Register</a>
+                <router-link to="/user/sign-up" class="link-danger">Register</router-link>
               </p>
             </div>
           </div>

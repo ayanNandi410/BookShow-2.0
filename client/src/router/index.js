@@ -180,6 +180,12 @@ const router = createRouter({
       beforeEnter : guardMyroute,
       component: () => import('../views/adminAllocateTiming.vue'),
     },
+    {
+      path: "/admin/timing/update",
+      name: "updateTiming",
+      beforeEnter : guardMyroute,
+      component: () => import('../views/updateTiming.vue'),
+    },
 
   ],
 });
