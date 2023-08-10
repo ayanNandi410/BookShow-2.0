@@ -1,5 +1,6 @@
 # Api initialization
 from flask_restful import Resource, Api
+
 from .api.test import TestAPI
 from .api.cityApi import GetAllCitiesAPI
 from .api.adminVenueApi import AdminVenueListByCityAPI, AdminVenueAPI
@@ -14,6 +15,7 @@ from .api.reviewApi import MovieReviewAPI
 from .api.calcReviewApi import CalcReviewAPI
     
 def getConfiguredApi(app):
+
     apiV = Api(app)
 
     # Common
