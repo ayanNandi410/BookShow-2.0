@@ -24,7 +24,6 @@ def format_report(temp_file,bookings,reviews,user):
     
 def create_report(bookings,reviews,user,type):
     message = format_report('templates/report_template.html',bookings,reviews,user)
-    print(message)
     html = HTML(string=message)
     file_name = str(user['name']+"_"+datetime.today().strftime("%d %b %Y"))+'.pdf'
     print(file_name)
@@ -44,12 +43,15 @@ def MontlyEnmtReportJob(type='pdf'):
     startMonth = datetime.now().replace(day=1,hour=0,minute=0,second=0)
 
     for user in user_list:
-        bookings = db.session.query(BookTicket).filter(BookTicket.user_email == user.email, BookTicket.timestamp > startMonth).all()
+        bookings = db.session.query(BookTicket)\
+        .filter(BookTicket.user_email == user.email, BookTicket.timestamp > startMonth)\
+        .with_entities(BookTicket.show, BookTicket.allocSeats, BookTicket.totPrice, BookTicket.venue)\
+        .all()
         reviews = db.session.query(MovieReview).filter(MovieReview.user_email == user.email, MovieReview.timestamp > startMonth).all()
         curUser = {
             "name": user.getName(),
             "email": user.email,
         }
-        print(bookings)
+        print(bookings[0])
         create_report(bookings,reviews,curUser,type)
         #send_email(address=user.email, subject="Hurry! Movies coming up in your local theatres",message="Hey "+ firstName +",\n\nYou haven't checked out the recent releases! Seats booking fast! Go to BookShow and book your favorite show now.")

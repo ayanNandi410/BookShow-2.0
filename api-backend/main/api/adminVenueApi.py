@@ -5,6 +5,7 @@ from main.db import db
 from main.validation import NotFoundError, BusinessValidationError
 from sqlalchemy import desc, exc
 from flask_security import auth_required, roles_accepted
+from ..cachedTasks import cache
 
 # Output JSON format
 venue_output_fields = {
@@ -26,6 +27,7 @@ create_venue_parser.add_argument('location')
 create_venue_parser.add_argument('city')
 create_venue_parser.add_argument('capacity',type=int, help='Capacity cannot be converted')
 create_venue_parser.add_argument('description')
+
 
 class AdminVenueAPI(Resource):
 
@@ -51,6 +53,8 @@ class AdminVenueAPI(Resource):
         city = vn_args.get('city',None)
         capacity = vn_args.get('capacity',None)
         desc = vn_args.get('description',None)
+
+        cache.delete('getAllCities')
 
         if name is None or name == '':
             raise BusinessValidationError(status_code=400,error_code="VN002",error_message="Name is required")
@@ -102,6 +106,7 @@ class AdminVenueAPI(Resource):
         capacity = vn_args.get('capacity',None)
         desc = vn_args.get('description',None)
          
+        cache.delete('getAllCities')
 
         if name is None or name == '':
             raise BusinessValidationError(status_code=400,error_code="VN002",error_message="Name is required")
@@ -146,6 +151,9 @@ class AdminVenueAPI(Resource):
     @auth_required('token')
     @roles_accepted('admin')
     def delete(self,id):
+
+        cache.delete('getAllCities')
+
         venue = db.session.query(Venue).filter(Venue.id == id).first()
 
         if not venue:

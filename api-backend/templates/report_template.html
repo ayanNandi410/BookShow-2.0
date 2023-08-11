@@ -8,8 +8,8 @@
     <h2>User : {{ user['name'] }}</h2><br/>
     <h4>Bookings done:</h4>
     <ul>
-        {% for entry in booking %}
-        <li>{{ entry['show']['name'] }}</li>
+        {% for entry in bookings %}
+        <li>{{ entry['timestamp'] }}</li>
         {% endfor %}
     </ul>
 </body>

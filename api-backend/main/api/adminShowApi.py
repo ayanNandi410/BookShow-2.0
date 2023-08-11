@@ -7,6 +7,7 @@ from main.db import db
 from main.validation import NotFoundError, BusinessValidationError
 from datetime import datetime as dt
 from flask_security import auth_required, roles_accepted
+from ..cachedTasks import cache
 
 # api for handling shows
 
@@ -66,7 +67,8 @@ class ShowsByNameApi(Resource):
     @roles_accepted('admin','user')
     def get(self,name):
 
-        shows = db.session.query(Show).filter(Show.name.ilike(f'%{name}%')).all()
+        from ..cachedTasks import getShowsByName
+        shows = getShowsByName(name)
 
         if shows:
             return shows
@@ -98,6 +100,8 @@ class ShowAPI(Resource):
         languages = vn_args.get('languages',[])
         rating = vn_args.get('rating',None)
         duration = vn_args.get('duration',None)
+
+        cache.delete('getShowsByName')
 
         if name is None or name == '':
             raise BusinessValidationError(status_code=400,error_code="SW002",error_message="Name is required")
@@ -167,6 +171,8 @@ class ShowAPI(Resource):
         rating = vn_args.get('rating',None)
         duration = vn_args.get('duration',None)
 
+        cache.delete('getShowsByName')
+
         if name is None or name == '':
             raise BusinessValidationError(status_code=400,error_code="SW002",error_message="Name is required")
     
@@ -228,6 +234,9 @@ class ShowAPI(Resource):
     @auth_required('token')
     @roles_accepted('admin')
     def delete(self,id):
+
+        cache.delete('getShowsByName')
+
         show = db.session.query(Show).filter(Show.id == id).first()
 
         if not show:

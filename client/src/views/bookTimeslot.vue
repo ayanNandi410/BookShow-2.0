@@ -235,7 +235,7 @@ export default {
                 <p class="alert alert-sm alert-primary" style="width: 40%; margin: auto;" v-if="slot.length==0">No shows</p>
 
               <span v-else v-for="entry in slot" class="">
-                    <button v-if="entry.avSeats == 0" class="btn btn-danger position-relative" disabled>{{ entry.time }}
+                    <button v-if="entry.avSeats == 0" class="btn btn-danger position-relative" title="No seats left">{{ entry.time }}
                       <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
                       {{ entry.avSeats }}</span></button>&emsp14;
 
