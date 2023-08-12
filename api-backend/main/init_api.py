@@ -1,7 +1,6 @@
 # Api initialization
 from flask_restful import Resource, Api
 
-from .api.test import TestAPI
 from .api.cityApi import GetAllCitiesAPI
 from .api.adminVenueApi import AdminVenueListByCityAPI, AdminVenueAPI
 from .api.adminShowApi import PopularShowsApi, ShowAPI, ListShowByVenueApi, ShowsByNameApi
@@ -12,14 +11,12 @@ from .api.userShowApi import FilterShowsApi
 
 from .api.bookingApi import BookTicketAPI
 from .api.reviewApi import MovieReviewAPI
-from .api.calcReviewApi import CalcReviewAPI
     
 def getConfiguredApi(app):
 
     apiV = Api(app)
 
     # Common
-    apiV.add_resource(TestAPI,"/api/test",endpoint="/test")
     apiV.add_resource(GetAllCitiesAPI,"/api/city/all",endpoint="/city/all")
     
     # venue
@@ -46,7 +43,6 @@ def getConfiguredApi(app):
 
     apiV.add_resource(BookTicketAPI,"/api/booking","/api/booking/<string:email>",endpoint="/booking")
     apiV.add_resource(MovieReviewAPI,"/api/review","/api/review/<int:sid>",endpoint="/review")
-    apiV.add_resource(CalcReviewAPI,"/api/updateReview","/api/updateReview/<string:sid>",endpoint="/updateReview")
 
     apiV.add_resource(ExportShowAPI,"/api/exportVenue/<vid>",endpoint="/exportVenue")
     apiV.add_resource(DownloadCSVAPI,"/api/venue/downloadCSV/<name>",endpoint="/venue/downloadCSV")

@@ -48,7 +48,7 @@ export default {
         let result = true;
 
         let rating = document.getElementById('showRating');
-        if((rating.value>10) ||(rating.value<0))
+        if((rating.value>10) ||(rating.value<0) || (rating.value != Math.floor(rating.value)))
         {
             document.getElementById('ratingCheck').style.display = "block";
             result = false;
@@ -187,7 +187,7 @@ export default {
                         <span class="input-group-text">Initial Rating</span>
                         <input type="text" class="form-control" name="showRating" id="showRating" v-model="rating"
                         placeholder="Out of 10" aria-label="Show Rating" required>
-                        <div id="ratingCheck" class="invalid-feedback">&emsp;Invalid value for rating ( Must be 1-5 )</div>
+                        <div id="ratingCheck" class="invalid-feedback">&emsp;Invalid value for rating ( Must be 1-5 and a integer )</div>
                     </div>
                 </div>
             </div>

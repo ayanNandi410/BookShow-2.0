@@ -289,5 +289,4 @@ export function addReview(token,details) {
     body: JSON.stringify(details)
   };
     return fetch(`${API_URL}review`, requestOptions)
-  
 }

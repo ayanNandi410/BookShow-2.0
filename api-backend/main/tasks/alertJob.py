@@ -24,7 +24,6 @@ def reminder():
     for user in user_list:
         visited = booked = False
         startDT = datetime.utcnow() - timedelta(hours=17)
-        
 
         if(user.last_login_at > startDT):
             visited = True

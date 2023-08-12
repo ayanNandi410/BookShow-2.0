@@ -215,7 +215,7 @@ components: { AdminVenueCard, ToastMsg },
 
     <!-- Offcanvas for Shows -->
   <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasShows" data-bs-scroll="true" data-bs-backdrop="false"
-    aria-labelledby="offcanvasBottomLabel" style="height: 70%;">
+    aria-labelledby="offcanvasBottomLabel" style="height: 90%;">
 
     <div class="offcanvas-header">
       <h5 class="offcanvas-title" id="offcanvasShowsTitle" >Shows for : {{ venueChoice.name }}</h5>
@@ -229,7 +229,7 @@ components: { AdminVenueCard, ToastMsg },
       </div>
       <h4 class="alert alert-primary text-center" style="margin: 8% 10% 20%;" 
         v-if="showsForVenue.length==0">Did not find any venue. Try later..<br/><br/>
-        <p id="fetchShowsError" style="background-color: rgb(110, 164, 164); 
+        <p id="fetchShowsError" style="display: none;  background-color: rgb(110, 164, 164); 
         width: fit-content; margin: auto; padding: 2px 10px;" ></p>
       </h4>
 

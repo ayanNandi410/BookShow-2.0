@@ -393,21 +393,21 @@ components: { UserShowCard , ToastMsg },
             </div>
             <ul class="list-group" id="reviews">
                 <li class="list-group-item justify-content-between align-items-start mt-3" v-for="review in reviews">
-                  <div class="ms-2 me-auto">
+                <div class="ms-2 me-auto">
                   <div class="fw-bold">{{ review.name }}</div>
-                  {{ review.comment }}<br/><br/>
-                  <p class="text-muted">By {{ review.user_email }}, on {{ review.timestamp.substring(4,16)}}</p>
-                  <img
-                    src="@/assets/star-full.svg"
-                    class="filter-orange" width="20"
-                    v-for="(n, index) in parseInt(review.gRating/2)"
-                />
-                <img
-                    src="@/assets/star-empty.svg"
-                    class="filter-orange" width="20"
-                    v-for="(n, index) in 5 - parseInt(review.gRating/2)"
-                />
-                  </div>
+                      <p>{{ review.comment }}</p>
+                      <img
+                        src="@/assets/star-full.svg"
+                        class="filter-orange" width="20"
+                        v-for="(n, index) in parseInt(review.gRating/2)"
+                    />
+                    <img
+                        src="@/assets/star-empty.svg"
+                        class="filter-orange" width="20"
+                        v-for="(n, index) in 5 - parseInt(review.gRating/2)"
+                    />
+                </div>
+                <br/><p class="text-muted">By {{ review.user_email }}, on {{ review.timestamp.substring(4,16)}}</p>
                 </li>
             </ul>
         </div>

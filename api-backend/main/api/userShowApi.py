@@ -45,6 +45,8 @@ filter_show_parser.add_argument('languages', type=str, action='append', location
 class FilterShowsApi(Resource):
 
     @marshal_with(userShow_output_fields)
+    @auth_required('token')
+    @roles_accepted('user')
     def post(self):
         vn_args = filter_show_parser.parse_args()
         tags = vn_args.get('tags',[])

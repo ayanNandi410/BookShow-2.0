@@ -7,6 +7,7 @@ from sqlalchemy import desc, exc
 from main.db import db
 from main.validation import NotFoundError, BusinessValidationError
 from datetime import datetime as dt, timedelta
+from flask_security import auth_required, roles_accepted
 
 # Api for working with show-venue allocations alongwith timing details
 
@@ -62,6 +63,8 @@ class AllocationAPI(Resource):
 
     # get an allocation by its id
     @marshal_with(allocation_output_fields)
+    @auth_required('token')
+    @roles_accepted('admin','user')
     def get(self,aid):
 
         timeslot = db.session.query(Allocation).filter(Allocation.id == aid).first()
@@ -75,6 +78,8 @@ class AllocationAPI(Resource):
             return slot, 200
 
     # create a new allocation
+    @auth_required('token')
+    @roles_accepted('admin')
     def post(self):
         vn_args = create_allocation_parser.parse_args()
         venueId = vn_args.get('venueId',None)
@@ -143,6 +148,8 @@ class AllocationAPI(Resource):
         return "Success", 201
 
     # update existing allocation
+    @auth_required('token')
+    @roles_accepted('admin')
     def put(self,aid):
         vn_args = create_allocation_parser.parse_args()
         venueId = vn_args.get('venueId',None)
@@ -211,6 +218,8 @@ class AllocationAPI(Resource):
         return "Success", 201
     
     # delete existing allocation
+    @auth_required('token')
+    @roles_accepted('admin')
     def delete(self,aid):
 
         try:
@@ -228,6 +237,8 @@ class AllocationAPI(Resource):
 class AllocationBetweenDatesAPI(Resource):
 
     @marshal_with(userallocation_output_fields)
+    @auth_required('token')
+    @roles_accepted('admin','user')
     def get(self):
         sDate = request.args.get('startDate')
         eDate = request.args.get('endDate')
@@ -255,6 +266,8 @@ class AllocationBetweenDatesAPI(Resource):
 class AllocationForSevenDaysAPI(Resource):
 
     @marshal_with(userSevenD_output_fields)
+    @auth_required('token')
+    @roles_accepted('admin','user')
     def get(self):
         sDate = dt.now()
         eDate = dt.now() + timedelta(days=7)

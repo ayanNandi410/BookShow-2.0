@@ -6,6 +6,8 @@ from ..models import BookTicket, Show, Venue, Allocation, MovieReview
 from main.db import db
 from main.validation import NotFoundError, BusinessValidationError
 from sqlalchemy import desc, exc
+from ..tasks.recalcReview import recalcReview
+from flask_security import auth_required, roles_accepted
 
 # Api to handle user reviews
 
@@ -27,6 +29,8 @@ class MovieReviewAPI(Resource):
 
     # get user reviews by show name
     @marshal_with(review_output_fields)
+    @auth_required('token')
+    @roles_accepted('user')
     def get(self,sid):
         show = db.session.query(Show).get(sid)
 
@@ -41,6 +45,8 @@ class MovieReviewAPI(Resource):
             return reviews, 200
 
     # submit user review for a show
+    @auth_required('token')
+    @roles_accepted('user')
     def post(self):
         bk_args = create_review_parser.parse_args()
         sid = bk_args.get('sid',None)
@@ -80,7 +86,15 @@ class MovieReviewAPI(Resource):
             new_review = MovieReview(user_email=email,show_id=sid,comment=comment,gRating=int(rating),timestamp=timestamp)
             db.session.add(new_review)
             db.session.commit()
+
+            # update average rating
+            job = recalcReview.apply_async((sid,int(rating)), countdown=3, retry=True, retry_policy={
+                'max_retries': 5,
+                'interval_step': 1,
+            })
+
             return "Success", 200
+        
         except exc.SQLAlchemyError as e:    # Some Database Error occured
             db.session.rollback()
             raise BusinessValidationError(status_code=500,error_code="RW020",error_message="Add Transaction failed. Try again")

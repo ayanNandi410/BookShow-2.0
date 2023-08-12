@@ -1,6 +1,6 @@
 <script>
 import ToastMsg from '../components/toastMsg.vue'
-import { fetchBooking, addReview } from '../api';
+import { fetchBooking, addReview} from '../api';
 
 export default {
   name: "userBookings",

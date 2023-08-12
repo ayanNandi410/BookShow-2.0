@@ -21,6 +21,8 @@ venue_output_fields = {
 class UserVenueListByCityAPI(Resource):
 
     @marshal_with(venue_output_fields)
+    @auth_required('token')
+    @roles_accepted('user')
     def get(self,city):
         venues = db.session.query(Venue).filter(Venue.city == city).order_by(desc(Venue.timestamp)).all()
 
@@ -37,6 +39,8 @@ class UserVenueListByCityAPI(Resource):
 class GetVenueByNameApi(Resource):
 
     @marshal_with(venue_output_fields)
+    @auth_required('token')
+    @roles_accepted('user','admin')
     def get(self,name):
         venues = db.session.query(Venue).filter(Venue.name.ilike(f'%{name}%')).all()
 
@@ -49,6 +53,8 @@ class UserVenueAPI(Resource):
 
     # get Venue by Name
     @marshal_with(venue_output_fields)
+    @auth_required('token')
+    @roles_accepted('user')
     def get(self,id):
         venue = db.session.query(Venue).filter(Venue.id == id).first()
 
@@ -62,6 +68,8 @@ class UserVenueAPI(Resource):
 class VenueListByShowApi(Resource):
 
     @marshal_with(venue_output_fields)
+    @auth_required('token')
+    @roles_accepted('user')
     def get(self,sid):
         city = request.args.get('city',None)
            
