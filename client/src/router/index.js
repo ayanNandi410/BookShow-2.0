@@ -111,12 +111,6 @@ const router = createRouter({
       beforeEnter : guardMyroute,
       component: () => import ("../views/bookTimeslot.vue"),
     },
-    {
-      path: "/user/confirmTicket",
-      name: "userConfirmTicket",
-      beforeEnter : guardMyroute,
-      component: () => import ("../views/confirmTicket.vue"),
-    },
 
     
     // Admin Routes

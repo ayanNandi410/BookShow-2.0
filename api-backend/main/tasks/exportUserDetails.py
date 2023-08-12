@@ -8,6 +8,8 @@ from ..db import db
 from ..send_email import send_email
 from celery.schedules import crontab
 
+CurMonth = datetime.now().strftime("%B, %Y")
+
 @celeryObj.on_after_finalize.connect
 def alert_month_everyUser(sender, **kwargs):
     sender.add_periodic_task(
@@ -20,18 +22,19 @@ def alert_month_everyUser(sender, **kwargs):
 def format_report(temp_file,bookings,reviews,user):
     with open(temp_file) as file:
         template = Template(file.read())
-        return template.render(bookings=bookings,reviews=reviews,user=user)
+        return template.render(bookings=bookings,reviews=reviews,user=user,month=CurMonth)
     
 def create_report(bookings,reviews,user,type):
     message = format_report('templates/report_template.html',bookings,reviews,user)
     html = HTML(string=message)
-    file_name = str(user['name']+"_"+datetime.today().strftime("%d %b %Y"))+'.pdf'
+    file_name = user['name']+"_"+CurMonth+'.pdf'
     print(file_name)
 
-    if type=='pdf':
-        html.write_pdf(target="files/"+file_name)
-    else:
-        pass
+    #if type=='pdf':
+    html.write_pdf(target="files/"+file_name)
+        #return "success"
+    #else:
+    return message
 
 @celeryObj.task()
 def MontlyEnmtReportJob(type='pdf'):
@@ -45,13 +48,28 @@ def MontlyEnmtReportJob(type='pdf'):
     for user in user_list:
         bookings = db.session.query(BookTicket)\
         .filter(BookTicket.user_email == user.email, BookTicket.timestamp > startMonth)\
-        .with_entities(BookTicket.show, BookTicket.allocSeats, BookTicket.totPrice, BookTicket.venue)\
         .all()
+
+        bookingList = []
+
+        for entry in bookings:
+            bookingData = {}
+            bookingData['showName'] = entry.show[0].name
+            bookingData['timeslot'] = datetime.strftime(entry.allocation.timeslot,"%Y-%m-%d, at %I:%M %p")
+            bookingData['venueName'] = entry.venue[0].name
+            bookingData['venueLoc'] = entry.venue[0].location+", "+entry.venue[0].city
+            bookingData['seats'] = entry.allocSeats
+            bookingData['price'] = entry.totPrice
+            bookingList.append(bookingData)
+
+
         reviews = db.session.query(MovieReview).filter(MovieReview.user_email == user.email, MovieReview.timestamp > startMonth).all()
         curUser = {
             "name": user.getName(),
             "email": user.email,
         }
         print(bookings[0])
-        create_report(bookings,reviews,curUser,type)
-        #send_email(address=user.email, subject="Hurry! Movies coming up in your local theatres",message="Hey "+ firstName +",\n\nYou haven't checked out the recent releases! Seats booking fast! Go to BookShow and book your favorite show now.")
+        msgHtml = create_report(bookingList,reviews,curUser,"html")
+        
+        attch_name = curUser['name']+"_"+CurMonth+'.pdf'
+        send_email(address=user.email, subject="Your "+CurMonth+" Monthly Report is here!",message=msgHtml,attachment=attch_name)

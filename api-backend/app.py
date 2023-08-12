@@ -5,7 +5,7 @@ from main.config import LocalDevConfig
 from flask_security import Security, SQLAlchemySessionUserDatastore, auth_required, roles_accepted, hash_password, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from main.workers import celeryObj, ContextTask
-import os
+import os, json
 import requests, secrets, string
 from flask_cors import CORS
 from main.models import User, Role, RolesUsers
@@ -21,7 +21,7 @@ from flask_caching import Cache
 app = None
 api = None
 celery = None
-cacheObj = None
+BASE_URL = "http://127.0.0.1:5000"
 
 def create_app():
     app = Flask(__name__)
@@ -31,6 +31,11 @@ def create_app():
 
     # allow cross-origin requests
     CORS(app)
+
+    
+    # attach configured Api's
+    from main.init_api import getConfiguredApi
+    api = getConfiguredApi(app)
 
     # Setup Flask-Security
     from main.datastore import user_datastore
@@ -65,7 +70,7 @@ def create_app():
             last_name = "User 1",
             username = "admin1BookShow",
             email="admin@bookshow.com",
-            password=hash_password("admin123")
+            password="admin123"
             )
         app.security.datastore.create_role(name="user")
         app.security.datastore.create_role(name="admin")
@@ -76,18 +81,28 @@ def create_app():
     setup_controllers(app)
 
     addData(db)
+    print("-------------------- Test Data Added ----------------------")
+
+    return app, celery, api
 
 
-    return app, celery
+app, celery, api = create_app()
 
+# import requests
 
-app, celery = create_app()
+# adminUserDetails = {}
+# adminUserDetails['first_name'] = "Admin"
+# adminUserDetails['last_name'] = "User 1"
+# adminUserDetails['username'] = "admin1BookShow"
+# adminUserDetails['email'] = "admin@bookshow.com"
+# adminUserDetails['password'] = "admin123"
 
+# res1 = requests.post(BASE_URL+"/register",data=json.dumps(adminUserDetails))
+# print("-------------- Add Admin User: "+res1+" -------------------")
 
-# attach configured Api's
-from main.init_api import getConfiguredApi
-api = getConfiguredApi(app)
+# res2 = requests.get(BASE_URL+"/addRole/admin/admin@bookshow.com")
+# print("-------------- Add Role to Admin User: "+res1+" -------------------")
 
 
 if __name__ == '__main__':
-    app.run("127.0.0.1", debug=True)
+    app.run(BASE_URL[7:16], debug=True)

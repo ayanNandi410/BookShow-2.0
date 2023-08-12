@@ -151,7 +151,7 @@ export default {
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <router-link to="/user/confirmTicket" data-bs-toggle="modal" data-bs-target="#confirmModal" class="btn btn-primary">Book Tickets</router-link>
+        <router-link to="/user/confirmTicket" data-bs-dismiss="modal"><button data-bs-toggle="modal" data-bs-target="#confirmModal" class="btn btn-primary">Book Tickets</button></router-link>
       </div>
     </div>
   </div>
@@ -189,7 +189,7 @@ export default {
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button @click="confirmBooking" data-bs-toggle="modal" id="confirmBt" class="btn btn-primary">Confirm</button>
+        <button @click="confirmBooking" data-bs-dismiss="modal" id="confirmBt" class="btn btn-primary">Confirm</button>
       </div>
     </div>
   </div>
