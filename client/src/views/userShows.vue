@@ -224,7 +224,24 @@ computed: {
     loading(){
         return this.loading;
     },
-},
+
+    updateRating() {
+      document.getElementById('ratingValue').innerHTML = this.filterMd.rating;
+
+      if (this.filterMd.rating < 4) {
+        document.getElementById('ratingValue').classList.remove("bg-primary", "bg-success", "bg-warning", "bg-danger");
+        document.getElementById('ratingValue').classList.add("bg-danger");
+      }
+      else if (this.filterMd.rating > 7) {
+        document.getElementById('ratingValue').classList.remove("bg-primary", "bg-success", "bg-warning", "bg-danger");
+        document.getElementById('ratingValue').classList.add("bg-success");
+      }
+      else {
+        document.getElementById('ratingValue').classList.remove("bg-primary", "bg-success", "bg-warning", "bg-danger");
+        document.getElementById('ratingValue').classList.add("bg-warning");
+      }
+    },
+  },
 
 components: { UserShowCard , ToastMsg },
 
@@ -357,7 +374,7 @@ components: { UserShowCard , ToastMsg },
             <div class="col-12 col-sm-8 mb-3">
                 <label for="userRating" class="form-label">Rating (greater than) <span id="ratingValue" class="badge bg-primary text-white" on="changeColour();">5</span></label>
                 <input type="range" class="form-range" min="0" max="10" step="1" v-model="filterMd.rating"
-                name="userRating" id="userRating" onchange="updateRating(this.value);" required>
+                name="userRating" id="userRating" @change="updateRating" required>
             </div>
             
             <div class="col-12 mb-3">

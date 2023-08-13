@@ -8,9 +8,9 @@ from celery.schedules import crontab
 @celeryObj.on_after_finalize.connect
 def alert_evening_everyUser(sender, **kwargs):
     sender.add_periodic_task(
-        crontab(hour=17,minute=42,day_of_week=2),
+        crontab(hour=13,minute=30),
         reminder.s(),
-        name = 'at every day'
+        name = 'alertMail at every day'
     )
 
 

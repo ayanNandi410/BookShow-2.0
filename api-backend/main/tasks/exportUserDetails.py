@@ -13,9 +13,9 @@ CurMonth = datetime.now().strftime("%B, %Y")
 @celeryObj.on_after_finalize.connect
 def alert_month_everyUser(sender, **kwargs):
     sender.add_periodic_task(
-        crontab(hour=17,minute=42,day_of_week=2),
+        crontab(hour=13,minute=1,day_of_month=1),
         MontlyEnmtReportJob.s(),
-        name = 'at every month'
+        name = 'entertainment report at every month'
     )
 
 
@@ -37,7 +37,7 @@ def create_report(bookings,reviews,user,type):
     return message
 
 @celeryObj.task()
-def MontlyEnmtReportJob(type='pdf'):
+def MontlyEnmtReportJob():
     print("Started JOB -> Montly Entertainment Job")
     role = db.session.query(Role).filter(Role.name == 'user').first()
     user_list = role.users
